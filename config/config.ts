@@ -1,20 +1,31 @@
 import { defineConfig } from 'umi';
+import path from 'path';
+import routes from '../src/routes';
 
 export default defineConfig({
   nodeModulesTransform: {
     type: 'none',
   },
-  routes: [{ path: '/', component: '@/pages/index' }],
+  routes,
   theme: {
-    '@primary-color': '#29d9b3',
+    '@primary-color': '#326DFC',
     '@ant-prefix': 'ant',
   },
   layout: {
     name: 'Algorithm Management System',
-    logo: 'public/logo.png',
+    logo: '/logo.png',
     locale: false,
     navTheme: 'light',
+    width: '100%',
     layout: 'mix',
   },
+  favicon: '/logo.png',
   fastRefresh: {},
+  alias: {
+    '@root': path.resolve('./'),
+  },
+  cssLoader: {
+    localsConvention: 'camelCase',
+  },
+  forkTSChecker: {},
 });
