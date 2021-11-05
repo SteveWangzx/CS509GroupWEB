@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { history, request, useRequest } from 'umi';
-import { Button, Form, Input, Select } from 'antd';
+import { Button, Form, Input, Select, message } from 'antd';
 import { useModel } from 'umi';
 // import { userName } from 'config'
 
@@ -38,25 +38,32 @@ const Login = () => {
   // const _userName = userName()
 
   const login_set = async (data: any) => {
-    const res = await request(
+    await request(
       'https://jgt79w01d3.execute-api.us-east-2.amazonaws.com/Alpha/login',
       {
         method: 'post',
         data,
       },
-    ).then((res) => {
-      const { uname, type, statusType } = res;
-      localStorage.setItem('ams_uname', uname);
-      localStorage.setItem('ams_type', type);
-      localStorage.setItem('ams_statusType', statusType);
-    });
-    console.log(localStorage.getItem('ams_name'));
+    )
+      .then((res) => {
+        const { msg, data } = res;
+        const { uname, type } = data;
+        localStorage.setItem('ams_uname', uname);
+        localStorage.setItem('ams_type', type);
+        console.log(res);
+        message.success(msg);
+        history.push('/');
+        // localStorage.setItem('ams_statusType', statusType);
+      })
+      .catch((err) => {
+        message.error(err.msg);
+      });
   };
   const loginHook = () => {
     form.validateFields().then(() => {
-      const { uname, password } = form.getFieldsValue();
+      const { username, password } = form.getFieldsValue();
       const data = {
-        uname: uname,
+        uname: username,
         password: password,
       };
       login_set(data);
@@ -107,7 +114,6 @@ const Login = () => {
             >
               <Input
                 bordered={false}
-                name="uname"
                 placeholder="Please Enter Username"
                 prefix={
                   <img
@@ -128,7 +134,6 @@ const Login = () => {
               <Input.Password
                 bordered={false}
                 placeholder="Please Enter Password"
-                name="password"
                 prefix={
                   <img
                     src={passwordImg}
