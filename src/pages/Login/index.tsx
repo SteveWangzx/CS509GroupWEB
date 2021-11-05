@@ -12,56 +12,75 @@ import usernameImg from '@/images/username.png';
 import styles from './login.modules.less';
 
 export type LoginParams = {
-  username: string;
+  uname: string;
   password: string;
 };
-export const login = (data: LoginParams) =>
-  request<ResType.Normal<any>>('/sys/login', {
-    method: 'post',
-    data,
+
+const login_set = async (data: any) => {
+  const res = await request(
+    'https://jgt79w01d3.execute-api.us-east-2.amazonaws.com/Alpha/login',
+    {
+      method: 'post',
+      data,
+    },
+  ).then((res) => {
+    const { uname, type, statusType } = res;
+    localStorage.setItem('ams_uname', uname);
+    localStorage.setItem('ams_type', type);
+    localStorage.setItem('ams_statusType', statusType);
   });
+  console.log(localStorage.getItem('ams_name'));
+};
 
 const Login = () => {
   const { refresh } = useModel('@@initialState');
   const [form] = Form.useForm();
   // const _userName = userName()
 
-  const loginHook = useRequest(
-    (values) =>
-      Promise.race([
-        login(values),
-        new Promise((resolve, reject) => {
-          setTimeout(
-            () => reject({ message: 'Login over Time, please try again' }),
-            20000,
-          );
-        }),
-      ]),
-    {
-      manual: true,
-      onSuccess: (res) => {
-        const {
-          data: {
-            token,
-            userInfo: { realname, employerId },
-            role: { dataPermission, userId },
-          },
-        } = res;
-
-        localStorage.setItem('paperless_token', token);
-        localStorage.setItem('paperless_userId', userId);
-        localStorage.setItem('paperless_realname', realname);
-        localStorage.setItem('paperless_dataPermission', dataPermission);
-        // localStorage.setItem('paperless_username', username)
+  const login_set = async (data: any) => {
+    const res = await request(
+      'https://jgt79w01d3.execute-api.us-east-2.amazonaws.com/Alpha/login',
+      {
+        method: 'post',
+        data,
       },
-    },
-  );
+    ).then((res) => {
+      const { uname, type, statusType } = res;
+      localStorage.setItem('ams_uname', uname);
+      localStorage.setItem('ams_type', type);
+      localStorage.setItem('ams_statusType', statusType);
+    });
+    console.log(localStorage.getItem('ams_name'));
+  };
+  const loginHook = () => {
+    form.validateFields().then(() => {
+      const { uname, password } = form.getFieldsValue();
+      const data = {
+        uname: uname,
+        password: password,
+      };
+      login_set(data);
+    });
+  };
   const onFinish = async (values: LoginParams) => {
     history.push('/');
 
     setTimeout(() => {
       refresh();
     }, 0);
+  };
+
+  const test = (data: LoginParams) => {
+    request(
+      'https://jgt79w01d3.execute-api.us-east-2.amazonaws.com/Alpha/classification',
+      {
+        method: 'get',
+        // data: {
+        //   uname: '111',
+        //   password: '111111'
+        // },
+      },
+    );
   };
 
   return (
@@ -77,7 +96,7 @@ const Login = () => {
           </div>
 
           <Form
-            onFinish={onFinish}
+            // onFinish={onFinish}
             form={form}
             style={{ marginTop: 15 }}
             // initialValues={{ password: 'lgkj@wl' }}
@@ -88,6 +107,7 @@ const Login = () => {
             >
               <Input
                 bordered={false}
+                name="uname"
                 placeholder="Please Enter Username"
                 prefix={
                   <img
@@ -108,6 +128,7 @@ const Login = () => {
               <Input.Password
                 bordered={false}
                 placeholder="Please Enter Password"
+                name="password"
                 prefix={
                   <img
                     src={passwordImg}
@@ -124,9 +145,11 @@ const Login = () => {
                 size="large"
                 type="primary"
                 htmlType="submit"
-                loading={loginHook.loading}
                 shape="round"
                 block
+                onClick={() => {
+                  loginHook();
+                }}
               >
                 Sign In
               </Button>

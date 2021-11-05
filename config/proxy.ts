@@ -1,6 +1,6 @@
 export default {
   '/api': {
-    target: 'http://192.168.1.6:8081/v3',
+    target: 'https://6sdg3w27ja.execute-api.us-east-2.amazonaws.com/Alpha',
     changeOrigin: true,
     pathRewrite: { '^/api': '' },
   },
