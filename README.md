@@ -1,4 +1,4 @@
-# umi project
+# Group project for WPI CS509
 
 ## Getting Started
 
