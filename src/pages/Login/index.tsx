@@ -16,22 +16,6 @@ export type LoginParams = {
   password: string;
 };
 
-const login_set = async (data: any) => {
-  const res = await request(
-    'https://jgt79w01d3.execute-api.us-east-2.amazonaws.com/Alpha/login',
-    {
-      method: 'post',
-      data,
-    },
-  ).then((res) => {
-    const { uname, type, statusType } = res;
-    localStorage.setItem('ams_uname', uname);
-    localStorage.setItem('ams_type', type);
-    localStorage.setItem('ams_statusType', statusType);
-  });
-  console.log(localStorage.getItem('ams_name'));
-};
-
 const Login = () => {
   const { refresh } = useModel('@@initialState');
   const [form] = Form.useForm();
@@ -39,7 +23,7 @@ const Login = () => {
 
   const login_set = async (data: any) => {
     await request(
-      'https://jgt79w01d3.execute-api.us-east-2.amazonaws.com/Alpha/login',
+      'https://0y5wxsu5t0.execute-api.us-east-2.amazonaws.com/Alpha/login',
       {
         method: 'post',
         data,
@@ -56,9 +40,10 @@ const Login = () => {
         // localStorage.setItem('ams_statusType', statusType);
       })
       .catch((err) => {
-        message.error(err.msg);
+        message.error('Username or Password incorrect!');
       });
   };
+
   const loginHook = () => {
     form.validateFields().then(() => {
       const { username, password } = form.getFieldsValue();
@@ -79,7 +64,7 @@ const Login = () => {
 
   const test = (data: LoginParams) => {
     request(
-      'https://jgt79w01d3.execute-api.us-east-2.amazonaws.com/Alpha/classification',
+      'https://0y5wxsu5t0.execute-api.us-east-2.amazonaws.com/Alpha/classification',
       {
         method: 'get',
         // data: {

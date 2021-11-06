@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { history, request, useRequest } from 'umi';
-import { Button, Form, Input, Select } from 'antd';
+import { Button, Form, Input, Select, message } from 'antd';
 import { useModel } from 'umi';
 // import { userName } from 'config'
 
@@ -15,49 +15,45 @@ export type LoginParams = {
   username: string;
   password: string;
 };
-export const login = (data: LoginParams) =>
-  request<ResType.Normal<any>>('/sys/login', {
-    method: 'post',
-    data,
-  });
 
 const Create = () => {
   const { refresh } = useModel('@@initialState');
   const [form] = Form.useForm();
   // const _userName = userName()
 
-  const loginHook = useRequest(
-    (values) =>
-      Promise.race([
-        login(values),
-        new Promise((resolve, reject) => {
-          setTimeout(
-            () => reject({ message: 'Create over Time, please try again' }),
-            20000,
-          );
-        }),
-      ]),
-    {
-      manual: true,
-      onSuccess: (res) => {
-        const {
-          data: {
-            token,
-            userInfo: { realname, employerId },
-            role: { dataPermission, userId },
-          },
-        } = res;
-
-        localStorage.setItem('paperless_token', token);
-        localStorage.setItem('paperless_userId', userId);
-        localStorage.setItem('paperless_realname', realname);
-        localStorage.setItem('paperless_dataPermission', dataPermission);
-        // localStorage.setItem('paperless_username', username)
+  const register_set = async (data: any) => {
+    await request(
+      'https://0y5wxsu5t0.execute-api.us-east-2.amazonaws.com/Alpha/register',
+      {
+        method: 'post',
+        data,
       },
-    },
-  );
+    )
+      .then((res) => {
+        const { msg } = res;
+        message.success(msg);
+        console.log(res);
+        // localStorage.setItem('ams_statusType', statusType);
+      })
+      .catch((err) => {
+        message.error(`Register Failed! Please try again!${err.msg}`);
+      })
+      .finally(() => {
+        history.push('/login');
+      });
+  };
+  const registerHook = () => {
+    form.validateFields().then(() => {
+      const { username, password } = form.getFieldsValue();
+      const data = {
+        uname: username,
+        password: password,
+      };
+      register_set(data);
+    });
+  };
   const onFinish = async (values: LoginParams) => {
-    history.push('/');
+    history.push('/login');
 
     setTimeout(() => {
       refresh();
@@ -159,8 +155,10 @@ const Create = () => {
                 size="large"
                 type="primary"
                 htmlType="submit"
-                loading={loginHook.loading}
                 shape="round"
+                onClick={() => {
+                  registerHook();
+                }}
                 block
               >
                 Create Account

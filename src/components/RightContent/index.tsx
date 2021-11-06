@@ -1,24 +1,32 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { history, request } from 'umi';
 import { Menu, Modal, Dropdown, Avatar, Button, Form, Input } from 'antd';
 import { DownOutlined, UserOutlined } from '@ant-design/icons';
 import SearchForm from '@/components/RightContent/SearchForm';
 
 export default () => {
+  const userName = localStorage.getItem('ams_uname');
+  console.log(userName);
+
   return (
     <>
       <SearchForm />
       <Avatar
         icon={<UserOutlined />}
+        size="large"
         // style={{ marginRight: '10px' }}
       />
+      <div style={{ color: 'white' }}>
+        {userName ? `Welcome! ${userName}` : 'Anonymous User'}
+      </div>
       <Button
         type="link"
         onClick={() => {
-          history.push('/login');
+          localStorage.clear(),
+            userName ? history.push('/login') : history.push('/create');
         }}
       >
-        Sigh in
+        {userName ? 'Sign out' : 'Register'}
       </Button>
     </>
   );
