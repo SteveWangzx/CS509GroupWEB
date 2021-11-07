@@ -10,7 +10,6 @@ export default () => {
 
   return (
     <>
-      <SearchForm />
       <Avatar
         icon={<UserOutlined />}
         size="large"

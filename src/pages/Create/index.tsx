@@ -180,7 +180,7 @@ const Create = () => {
         </div>
 
         <div className={styles.copyright}>
-          CS509 Zhixiang Wang
+          CS509
           {/* {info.updateDate} */}
         </div>
       </div>

@@ -2,6 +2,11 @@ import type { IRoute } from 'umi';
 
 const routes: IRoute[] = [
   {
+    path: '/',
+    redirect: '/mainPage',
+  },
+  { path: '/mainPage', component: '@/pages/MainPage' },
+  {
     path: '/login',
     component: '@/pages/Login',
     layout: false,
@@ -11,7 +16,6 @@ const routes: IRoute[] = [
     component: '@/pages/Create',
     layout: false,
   },
-  { path: '/', component: '@/pages/index' },
 ];
 
 export default routes;
