@@ -9,7 +9,7 @@ import {
   Input,
   message,
 } from 'antd';
-import { request } from 'umi';
+import { request, history } from 'umi';
 import SearchForm from '@/components/RightContent/SearchForm';
 import Algorithms from '@/pages/Algorithms';
 import Introduction from '@/pages/Introduction';
@@ -28,6 +28,7 @@ export default function IndexPage() {
   const [form_class] = Form.useForm();
   const [form_algo] = Form.useForm();
   const [algoParam, setAlgoParam] = useState<any>('0');
+  const [refresh, setRefresh] = useState<boolean>(false);
 
   const onTreeChange = () => {
     setValue(value);
@@ -70,6 +71,10 @@ export default function IndexPage() {
         console.log(dataTree);
       });
   }, []);
+
+  useEffect(() => {
+    refresh && setTimeout(() => setRefresh(false));
+  }, [refresh]);
 
   const recursionMenu = (data: any) => {
     const dataSource = data;
@@ -116,6 +121,7 @@ export default function IndexPage() {
   const handleAlgoOk = () => {
     setAlgoVisible(false);
     form_algo.resetFields();
+    refresh ? setRefresh(false) : setRefresh(true);
   };
   const handleClassOk = () => {
     setClassVisible(false);
@@ -148,6 +154,7 @@ export default function IndexPage() {
       ).then((res) => {
         message.success(res.msg);
         handleClassOk();
+        history.push('/');
       });
     });
   };
@@ -174,6 +181,7 @@ export default function IndexPage() {
       ).then((res) => {
         message.success(res.msg);
         handleAlgoOk();
+        history.push('/');
       });
     });
   };

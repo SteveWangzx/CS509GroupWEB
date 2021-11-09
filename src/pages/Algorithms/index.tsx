@@ -1,4 +1,5 @@
 import { request } from '@/.umi/plugin-request/request';
+import { history } from 'umi';
 import React, { useEffect, useState } from 'react';
 import {
   Button,
@@ -28,6 +29,7 @@ export default function (params: params) {
   const [Visible, setVisible] = useState<boolean>(false);
   const [text, setText] = useState<any>();
   const [algoInfo, setAlgoInfo] = useState<info>();
+  const [refresh, setRefresh] = useState<boolean>(false);
 
   const { Title, Paragraph, Text, Link } = Typography;
 
@@ -65,6 +67,10 @@ export default function (params: params) {
     });
   }, [aid]);
 
+  useEffect(() => {
+    refresh && setTimeout(() => setRefresh(false));
+  }, [refresh]);
+
   const getField = (data: any) => {
     const { implementationList } = data;
     return Object.values(implementationList).map((item: any, index: any) => {
@@ -97,6 +103,7 @@ export default function (params: params) {
         })
         .then((res) => {
           handleOk();
+          history.push('/');
         });
     });
   };
