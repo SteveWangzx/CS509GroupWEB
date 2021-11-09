@@ -9,6 +9,6 @@ export default () => (
       alignItems: 'center',
     }}
   >
-    <Spin size="large" />
+    <Spin size="small" />
   </div>
 );
