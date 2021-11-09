@@ -10,7 +10,7 @@ export default function () {
       <Title>Welcome to Algorithm Management System</Title>
       <Title level={2}>Introduction</Title>
       <Paragraph>
-        This is a web application created by Zhixiang Wang, Zeyu Hu, Jing Yang,
+        This is a web application created by Zhixiang Wang, Zeyu Hu, Jin Yang,
         Yibo Teng and Xuhui Fan
       </Paragraph>
       <Title level={2}>How to use Algorithm Management System</Title>

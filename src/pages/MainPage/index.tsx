@@ -249,6 +249,8 @@ export default function IndexPage() {
             >
               add Algorithm
             </Button>
+            <Button type="primary">remove classification</Button>
+            <Button type="primary">remove Algorithm</Button>
             <Modal
               title="Add Classification"
               visible={ClassVisible}

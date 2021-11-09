@@ -121,9 +121,11 @@ export default function (params: params) {
         <br />
         Space complexity:{algoInfo?.spacecplx}
       </Paragraph>
-      <Descriptions title="Implementations" layout="vertical" column={1}>
+      <Title level={2}>Implementation</Title>
+      <Descriptions layout="vertical" column={1}>
         {text}
       </Descriptions>
+      <Title level={2}>Problem Instance</Title>
       <Button
         type="primary"
         onClick={() => {
@@ -136,6 +138,8 @@ export default function (params: params) {
       >
         add Implementation
       </Button>
+      <Button type="primary">add Problem Instance</Button>
+      <Button type="primary">remove Implementation</Button>
       <Modal
         title="Add Implementation"
         visible={Visible}
