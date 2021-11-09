@@ -7,6 +7,12 @@ export default defineConfig({
     type: 'none',
   },
   routes,
+  history: {
+    type: 'hash',
+  },
+  base: './',
+  publicPath: './',
+  hash: true,
   theme: {
     '@primary-color': '#326DFC',
     '@ant-prefix': 'ant',
