@@ -6,7 +6,6 @@ import SearchForm from '@/components/RightContent/SearchForm';
 
 export default () => {
   const userName = localStorage.getItem('ams_uname');
-  console.log(userName);
 
   return (
     <>

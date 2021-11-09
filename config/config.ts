@@ -20,6 +20,9 @@ export default defineConfig({
     layout: 'mix',
   },
   favicon: '/logo.png',
+  dynamicImport: {
+    loading: '@/components/DynamicImportLoading',
+  },
   fastRefresh: {},
   alias: {
     '@root': path.resolve('./'),
