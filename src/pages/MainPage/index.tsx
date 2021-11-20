@@ -24,9 +24,11 @@ export default function IndexPage() {
   const [menuData, setMenuData] = useState<any>();
   const [ClassVisible, setClassVisible] = useState<boolean>(false);
   const [AlgoVisible, setAlgoVisible] = useState<boolean>(false);
+  const [RemoveClassVisible, setRemoveClassVisible] = useState<boolean>(false);
   const [value, setValue] = useState(undefined);
   const [form_class] = Form.useForm();
   const [form_algo] = Form.useForm();
+  const [form_removeclass] = Form.useForm();
   const [algoParam, setAlgoParam] = useState<any>('0');
   const [refresh, setRefresh] = useState<boolean>(false);
 
@@ -118,6 +120,10 @@ export default function IndexPage() {
     setAlgoVisible(true);
     form_algo.resetFields();
   };
+  const showRemoveClassModal = () => {
+    setRemoveClassVisible(true);
+    form_removeclass.resetFields();
+  };
   const handleAlgoOk = () => {
     setAlgoVisible(false);
     form_algo.resetFields();
@@ -134,6 +140,9 @@ export default function IndexPage() {
   const handleClassCancel = () => {
     setClassVisible(false);
     form_class.resetFields();
+  };
+  const handleRemoveClassCancel = () => {
+    setRemoveClassVisible(false);
   };
 
   const SubmitClassification = () => {
@@ -249,7 +258,13 @@ export default function IndexPage() {
             >
               add Algorithm
             </Button>
-            <Button type="primary">remove classification</Button>
+            <Button
+              type="primary"
+              style={{ display: 'inline' }}
+              onClick={showRemoveClassModal}
+            >
+              remove classification
+            </Button>
             <Button type="primary">remove Algorithm</Button>
             <Modal
               title="Add Classification"
@@ -415,6 +430,46 @@ export default function IndexPage() {
                     placeholder="Please Enter Space complexity for algorithm"
                     autoComplete="off"
                   ></Input>
+                </Form.Item>
+              </Form>
+            </Modal>
+            <Modal
+              title="Remove CLassification"
+              visible={RemoveClassVisible}
+              footer={[
+                <Button
+                  type="primary"
+                  onClick={() => handleRemoveClassCancel()}
+                >
+                  Cancel
+                </Button>,
+                <Button type="primary">Remove</Button>,
+              ]}
+              onCancel={handleRemoveClassCancel}
+            >
+              <Form form={form_class}>
+                <Form.Item
+                  name="cid"
+                  rules={[
+                    {
+                      required: true,
+                      message: 'Must select a parent classification',
+                    },
+                  ]}
+                  label="Parent classification"
+                >
+                  <TreeSelect
+                    showSearch
+                    style={{ width: '100%' }}
+                    value={value}
+                    dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+                    placeholder="Please select parent classification"
+                    allowClear
+                    treeDefaultExpandAll
+                    onChange={onTreeChange}
+                  >
+                    {dataTree}
+                  </TreeSelect>
                 </Form.Item>
               </Form>
             </Modal>
