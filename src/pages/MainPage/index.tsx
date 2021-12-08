@@ -160,6 +160,7 @@ export default function IndexPage() {
         url: '',
         parentcid: cid,
         name: name,
+        uid: uid,
       };
       console.log(data);
       request(
@@ -182,6 +183,7 @@ export default function IndexPage() {
       const data = {
         url: '',
         parentcid: cid,
+        uid: uid,
         name: name,
         introduction: introduction,
         content: content,
@@ -244,12 +246,11 @@ export default function IndexPage() {
               type="primary"
               style={{ display: 'inline' }}
               onClick={() => {
-                // if (localStorage.getItem('ams_uname')) {
-                //   showClassModel();
-                // } else {
-                //   message.error('Please login to operate');
-                // }
-                showClassModel();
+                if (localStorage.getItem('ams_uname')) {
+                  showClassModel();
+                } else {
+                  message.error('Please login to operate');
+                }
               }}
             >
               add Classification
@@ -258,12 +259,11 @@ export default function IndexPage() {
               type="primary"
               style={{ display: 'inline' }}
               onClick={() => {
-                showAlgoModal();
-                // if (localStorage.getItem('ams_uname')) {
-                //   showAlgoModal();
-                // } else {
-                //   message.error('Please login to operate');
-                // }
+                if (localStorage.getItem('ams_uname')) {
+                  showAlgoModal();
+                } else {
+                  message.error('Please login to operate');
+                }
               }}
             >
               add Algorithm
@@ -271,14 +271,26 @@ export default function IndexPage() {
             <Button
               type="primary"
               style={{ display: 'inline' }}
-              onClick={showRemoveClassModal}
+              onClick={() => {
+                if (localStorage.getItem('ams_uname')) {
+                  showRemoveClassModal();
+                } else {
+                  message.error('Please login to operate');
+                }
+              }}
             >
               remove classification
             </Button>
             <Button
               type="primary"
               style={{ display: 'inline' }}
-              onClick={showRemoveAlgoModal}
+              onClick={() => {
+                if (localStorage.getItem('ams_uname')) {
+                  showRemoveAlgoModal();
+                } else {
+                  message.error('Please login to operate');
+                }
+              }}
             >
               remove Algorithm
             </Button>

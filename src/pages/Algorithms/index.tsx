@@ -30,6 +30,7 @@ export default function (params: params) {
   const [text, setText] = useState<any>();
   const [algoInfo, setAlgoInfo] = useState<info>();
   const [refresh, setRefresh] = useState<boolean>(false);
+  const uid = localStorage.getItem('ams_uid');
 
   const { Title, Paragraph, Text, Link } = Typography;
 
@@ -90,6 +91,7 @@ export default function (params: params) {
         aid: aid,
         language: language,
         code: code,
+        uid: uid,
       };
       request(
         'https://0y5wxsu5t0.execute-api.us-east-2.amazonaws.com/Alpha/classification/Implementation/add',
