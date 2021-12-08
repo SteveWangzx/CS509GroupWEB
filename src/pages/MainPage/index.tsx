@@ -25,6 +25,7 @@ export default function IndexPage() {
   const [ClassVisible, setClassVisible] = useState<boolean>(false);
   const [AlgoVisible, setAlgoVisible] = useState<boolean>(false);
   const [RemoveClassVisible, setRemoveClassVisible] = useState<boolean>(false);
+  const [RemoveAlgoVisible, setRemoveAlgoVisible] = useState<boolean>(false);
   const [value, setValue] = useState(undefined);
   const [form_class] = Form.useForm();
   const [form_algo] = Form.useForm();
@@ -124,6 +125,9 @@ export default function IndexPage() {
     setRemoveClassVisible(true);
     form_removeclass.resetFields();
   };
+  const showRemoveAlgoModal = () => {
+    setRemoveAlgoVisible(true);
+  };
   const handleAlgoOk = () => {
     setAlgoVisible(false);
     form_algo.resetFields();
@@ -143,6 +147,9 @@ export default function IndexPage() {
   };
   const handleRemoveClassCancel = () => {
     setRemoveClassVisible(false);
+  };
+  const handleRemoveAlgoCancel = () => {
+    setRemoveAlgoVisible(false);
   };
 
   const SubmitClassification = () => {
@@ -236,11 +243,12 @@ export default function IndexPage() {
               type="primary"
               style={{ display: 'inline' }}
               onClick={() => {
-                if (localStorage.getItem('ams_uname')) {
-                  showClassModel();
-                } else {
-                  message.error('Please login to operate');
-                }
+                // if (localStorage.getItem('ams_uname')) {
+                //   showClassModel();
+                // } else {
+                //   message.error('Please login to operate');
+                // }
+                showClassModel();
               }}
             >
               add Classification
@@ -249,11 +257,12 @@ export default function IndexPage() {
               type="primary"
               style={{ display: 'inline' }}
               onClick={() => {
-                if (localStorage.getItem('ams_uname')) {
-                  showAlgoModal();
-                } else {
-                  message.error('Please login to operate');
-                }
+                showAlgoModal();
+                // if (localStorage.getItem('ams_uname')) {
+                //   showAlgoModal();
+                // } else {
+                //   message.error('Please login to operate');
+                // }
               }}
             >
               add Algorithm
@@ -265,7 +274,13 @@ export default function IndexPage() {
             >
               remove classification
             </Button>
-            <Button type="primary">remove Algorithm</Button>
+            <Button
+              type="primary"
+              style={{ display: 'inline' }}
+              onClick={showRemoveAlgoModal}
+            >
+              remove Algorithm
+            </Button>
             <Modal
               title="Add Classification"
               visible={ClassVisible}
@@ -453,17 +468,54 @@ export default function IndexPage() {
                   rules={[
                     {
                       required: true,
-                      message: 'Must select a parent classification',
+                      message: 'Must select a classification',
                     },
                   ]}
-                  label="Parent classification"
+                  label="Classification"
                 >
                   <TreeSelect
                     showSearch
                     style={{ width: '100%' }}
                     value={value}
                     dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-                    placeholder="Please select parent classification"
+                    placeholder="Please select classification"
+                    allowClear
+                    treeDefaultExpandAll
+                    onChange={onTreeChange}
+                  >
+                    {dataTree}
+                  </TreeSelect>
+                </Form.Item>
+              </Form>
+            </Modal>
+            <Modal
+              title="remove Algorithm"
+              visible={RemoveAlgoVisible}
+              footer={[
+                <Button type="primary" onClick={() => handleRemoveAlgoCancel()}>
+                  Cancel
+                </Button>,
+                <Button type="primary">Remove</Button>,
+              ]}
+              onCancel={handleRemoveAlgoCancel}
+            >
+              <Form form={form_class}>
+                <Form.Item
+                  name="cid"
+                  rules={[
+                    {
+                      required: true,
+                      message: 'Must select a algorithm',
+                    },
+                  ]}
+                  label="Algorithm"
+                >
+                  <TreeSelect
+                    showSearch
+                    style={{ width: '100%' }}
+                    value={value}
+                    dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+                    placeholder="Please select algorithm"
                     allowClear
                     treeDefaultExpandAll
                     onChange={onTreeChange}
