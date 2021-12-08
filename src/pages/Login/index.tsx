@@ -31,9 +31,10 @@ const Login = () => {
     )
       .then((res) => {
         const { msg, data } = res;
-        const { uname, type } = data;
+        const { uname, type, uid } = data;
         localStorage.setItem('ams_uname', uname);
         localStorage.setItem('ams_type', type);
+        localStorage.setItem('ams_uid', uid);
         console.log(res);
         message.success(msg);
         history.push('/');

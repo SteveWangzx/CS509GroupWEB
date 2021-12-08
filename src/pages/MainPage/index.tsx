@@ -19,6 +19,7 @@ export default function IndexPage() {
   const { Sider, Content, Header } = Layout;
   const { SubMenu } = Menu;
   const { TreeNode } = TreeSelect;
+  const uid = localStorage.getItem('ams_uid');
   const [data, setData] = useState<any>();
   const [dataTree, setDataTree] = useState<any>();
   const [menuData, setMenuData] = useState<any>();
