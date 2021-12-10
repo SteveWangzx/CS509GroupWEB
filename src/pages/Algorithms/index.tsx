@@ -53,6 +53,7 @@ export default function (params: params) {
         method: 'POST',
         data: {
           aid: aid,
+          uid: uid,
         },
       },
     );
