@@ -23,7 +23,7 @@ const Create = () => {
 
   const register_set = async (data: any) => {
     await request(
-      'https://0y5wxsu5t0.execute-api.us-east-2.amazonaws.com/Alpha/register',
+      'https://n63zuarfta.execute-api.us-east-2.amazonaws.com/Alpha/register',
       {
         method: 'post',
         data,

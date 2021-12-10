@@ -25,8 +25,12 @@ interface info {
 
 export default function (params: params) {
   const { aid } = params;
-  const [form] = Form.useForm();
-  const [Visible, setVisible] = useState<boolean>(false);
+  const [form_imp] = Form.useForm();
+  const [form_ins] = Form.useForm();
+  const [form_removeimp] = Form.useForm();
+  const [addImpVisible, setImpVisible] = useState<boolean>(false);
+  const [addInsVisible, setInsVisible] = useState<boolean>(false);
+  const [removeImpVisible, setRemoveImpVisible] = useState<boolean>(false);
   const [text, setText] = useState<any>();
   const [algoInfo, setAlgoInfo] = useState<info>();
   const [refresh, setRefresh] = useState<boolean>(false);
@@ -34,21 +38,54 @@ export default function (params: params) {
 
   const { Title, Paragraph, Text, Link } = Typography;
 
-  const handleCancel = () => {
-    setVisible(false);
+  const handleImpOk = () => {
+    setImpVisible(false);
+    form_imp.resetFields();
   };
 
-  const handleOk = () => {
-    setVisible(false);
+  const handleInsOk = () => {
+    setInsVisible(false);
+    form_ins.resetFields();
   };
 
-  const handleClick = () => {
-    setVisible(true);
+  const handleRemoveImpOk = () => {
+    setRemoveImpVisible(false);
+    form_removeimp.resetFields();
+  };
+
+  const handleImpCancel = () => {
+    setImpVisible(false);
+    form_imp.resetFields();
+  };
+
+  const handleInsCancel = () => {
+    setInsVisible(false);
+    form_ins.resetFields();
+  };
+
+  const handleRemoveImpCancel = () => {
+    setRemoveImpVisible(false);
+    form_removeimp.resetFields();
+  };
+
+  const handleImpClick = () => {
+    setImpVisible(true);
+    form_imp.resetFields();
+  };
+
+  const handleInsClick = () => {
+    setInsVisible(true);
+    form_ins.resetFields();
+  };
+
+  const handleRemoveImpClick = () => {
+    setRemoveImpVisible(true);
+    form_removeimp.resetFields();
   };
 
   const getAlgorithm = async () => {
     const res = await request(
-      'https://0y5wxsu5t0.execute-api.us-east-2.amazonaws.com/Alpha/classification/Algorithm',
+      'https://n63zuarfta.execute-api.us-east-2.amazonaws.com/Alpha/classification/Algorithm',
       {
         method: 'POST',
         data: {
@@ -84,8 +121,8 @@ export default function (params: params) {
   };
 
   const addImplementation = () => {
-    form.validateFields().then(() => {
-      const data_form = form.getFieldsValue();
+    form_imp.validateFields().then(() => {
+      const data_form = form_imp.getFieldsValue();
       const { language, code } = data_form;
       const data = {
         aid: aid,
@@ -94,7 +131,7 @@ export default function (params: params) {
         uid: uid,
       };
       request(
-        'https://0y5wxsu5t0.execute-api.us-east-2.amazonaws.com/Alpha/classification/Implementation/add',
+        'https://n63zuarfta.execute-api.us-east-2.amazonaws.com/Alpha/classification/Implementation/add',
         {
           method: 'POST',
           data,
@@ -104,7 +141,59 @@ export default function (params: params) {
           message.success('success');
         })
         .then((res) => {
-          handleOk();
+          handleImpOk();
+          history.push('/');
+        });
+    });
+  };
+
+  const addProblemInstance = () => {
+    form_ins.validateFields().then(() => {
+      const data_form = form_ins.getFieldsValue();
+      const { instance, type } = data_form;
+      const data = {
+        aid: aid,
+        instance: instance,
+        type: type,
+        uid: uid,
+      };
+      request(
+        'https://n63zuarfta.execute-api.us-east-2.amazonaws.com/Alpha/classification/ProblemInstance/add',
+        {
+          method: 'POST',
+          data,
+        },
+      )
+        .then((res) => {
+          message.success('success');
+        })
+        .then((res) => {
+          handleInsOk();
+          history.push('/');
+        });
+    });
+  };
+
+  const removeImplementation = () => {
+    form_removeimp.validateFields().then(() => {
+      const data_form = form_removeimp.getFieldsValue();
+      const { iid } = data_form;
+      const data = {
+        iid: iid,
+        uid: uid,
+      };
+      request(
+        'https://n63zuarfta.execute-api.us-east-2.amazonaws.com/Alpha/classification/Implementation/remove',
+        {
+          method: 'POST',
+          data,
+        },
+      )
+        .then((res) => {
+          message.success('success');
+        })
+        .then((res) => {
+          handleRemoveImpOk();
           history.push('/');
         });
     });
@@ -132,7 +221,7 @@ export default function (params: params) {
         type="primary"
         onClick={() => {
           if (localStorage.getItem('ams_uname')) {
-            handleClick();
+            handleImpClick();
           } else {
             message.error('Please login to operate');
           }
@@ -140,22 +229,88 @@ export default function (params: params) {
       >
         add Implementation
       </Button>
-      <Button type="primary">add Problem Instance</Button>
-      <Button type="primary">remove Implementation</Button>
+      <Button
+        type="primary"
+        onClick={() => {
+          if (localStorage.getItem('ams_uname')) {
+            handleInsClick();
+          } else {
+            message.error('Please login to operate');
+          }
+        }}
+      >
+        add Problem Instance
+      </Button>
+      <Button
+        type="primary"
+        onClick={() => {
+          if (localStorage.getItem('ams_uname')) {
+            handleRemoveImpClick();
+          } else {
+            message.error('Please login to operate');
+          }
+        }}
+      >
+        remove Implementation
+      </Button>
       <Modal
         title="Add Implementation"
-        visible={Visible}
+        visible={addImpVisible}
         footer={[
-          <Button type="primary" onClick={() => handleCancel()}>
+          <Button type="primary" onClick={() => handleImpCancel()}>
             Cancel
           </Button>,
           <Button type="primary" onClick={() => addImplementation()}>
             Submit
           </Button>,
         ]}
-        onCancel={handleCancel}
+        onCancel={handleImpCancel}
       >
-        <Form form={form}>
+        <Form form={form_imp}>
+          <Form.Item name="language" label="language">
+            <Input />
+          </Form.Item>
+          <Form.Item name="code" label="implementation">
+            <Input.TextArea />
+          </Form.Item>
+        </Form>
+      </Modal>
+      <Modal
+        title="Add Problem Instance"
+        visible={addInsVisible}
+        footer={[
+          <Button type="primary" onClick={() => handleInsCancel()}>
+            Cancel
+          </Button>,
+          <Button type="primary" onClick={() => addProblemInstance()}>
+            Submit
+          </Button>,
+        ]}
+        onCancel={handleInsCancel}
+      >
+        <Form form={form_ins}>
+          <Form.Item name="instance" label="problem instance">
+            <Input.TextArea />
+          </Form.Item>
+          <Form.Item name="type" label="type">
+            <Input />
+          </Form.Item>
+        </Form>
+      </Modal>
+      <Modal
+        title="Remove Implementation"
+        visible={removeImpVisible}
+        footer={[
+          <Button type="primary" onClick={() => handleRemoveImpCancel()}>
+            Cancel
+          </Button>,
+          <Button type="primary" onClick={() => removeImplementation()}>
+            Remove
+          </Button>,
+        ]}
+        onCancel={handleRemoveImpCancel}
+      >
+        <Form form={form_removeimp}>
           <Form.Item name="language" label="language">
             <Input />
           </Form.Item>

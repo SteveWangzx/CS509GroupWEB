@@ -23,7 +23,7 @@ const Login = () => {
 
   const login_set = async (data: any) => {
     await request(
-      'https://0y5wxsu5t0.execute-api.us-east-2.amazonaws.com/Alpha/login',
+      'https://n63zuarfta.execute-api.us-east-2.amazonaws.com/Alpha/login',
       {
         method: 'post',
         data,
@@ -65,7 +65,7 @@ const Login = () => {
 
   const test = (data: LoginParams) => {
     request(
-      'https://0y5wxsu5t0.execute-api.us-east-2.amazonaws.com/Alpha/classification',
+      'https://n63zuarfta.execute-api.us-east-2.amazonaws.com/Alpha/classification',
       {
         method: 'get',
         // data: {

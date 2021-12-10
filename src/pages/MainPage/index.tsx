@@ -23,6 +23,7 @@ export default function IndexPage() {
   const [data, setData] = useState<any>();
   const [dataTree, setDataTree] = useState<any>();
   const [menuData, setMenuData] = useState<any>();
+  const [algoData, setAlgoData] = useState<any>();
   const [ClassVisible, setClassVisible] = useState<boolean>(false);
   const [AlgoVisible, setAlgoVisible] = useState<boolean>(false);
   const [RemoveClassVisible, setRemoveClassVisible] = useState<boolean>(false);
@@ -31,6 +32,7 @@ export default function IndexPage() {
   const [form_class] = Form.useForm();
   const [form_algo] = Form.useForm();
   const [form_removeclass] = Form.useForm();
+  const [form_removealgo] = Form.useForm();
   const [algoParam, setAlgoParam] = useState<any>('0');
   const [refresh, setRefresh] = useState<boolean>(false);
 
@@ -43,7 +45,7 @@ export default function IndexPage() {
 
   const testUrl = async () => {
     await request(
-      'https://0y5wxsu5t0.execute-api.us-east-2.amazonaws.com/Alpha/classification/Algorithm/get',
+      'https://n63zuarfta.execute-api.us-east-2.amazonaws.com/Alpha/classification/Algorithm/get',
       {
         method: 'get',
         params: {
@@ -55,7 +57,7 @@ export default function IndexPage() {
 
   const getClassification = async () => {
     const res = await request(
-      'https://0y5wxsu5t0.execute-api.us-east-2.amazonaws.com/Alpha/classification',
+      'https://n63zuarfta.execute-api.us-east-2.amazonaws.com/Alpha/classification',
       {
         method: 'get',
       },
@@ -64,16 +66,14 @@ export default function IndexPage() {
   };
 
   useEffect(() => {
-    getClassification()
-      .then((res) => {
-        const data_menu = recursionMenu(res.data);
-        const data_tree = recursionTree(res.data);
-        setDataTree(data_tree);
-        setMenuData(data_menu);
-      })
-      .then(() => {
-        console.log(dataTree);
-      });
+    getClassification().then((res) => {
+      const data_menu = recursionMenu(res.data);
+      const data_tree = recursionTree(res.data);
+      const data_tree_algo = recursionTreeAlgo(res.data);
+      setDataTree(data_tree);
+      setMenuData(data_menu);
+      setAlgoData(data_tree_algo);
+    });
   }, []);
 
   useEffect(() => {
@@ -114,6 +114,22 @@ export default function IndexPage() {
     });
   };
 
+  const recursionTreeAlgo = (data: any) => {
+    const dataSource = data;
+
+    return Object.values(data).map((item: any, index: any) => {
+      if (item.cid) {
+        return (
+          <TreeNode value={item.cid} title={`C: ${item.name}`}>
+            {item.sub && recursionTreeAlgo(item.sub)}
+          </TreeNode>
+        );
+      } else if (item.aid) {
+        return <TreeNode value={item.aid} title={`A: ${item.name}`}></TreeNode>;
+      }
+    });
+  };
+
   const showClassModel = () => {
     setClassVisible(true);
     form_class.resetFields();
@@ -128,6 +144,7 @@ export default function IndexPage() {
   };
   const showRemoveAlgoModal = () => {
     setRemoveAlgoVisible(true);
+    form_removealgo.resetFields();
   };
   const handleAlgoOk = () => {
     setAlgoVisible(false);
@@ -137,6 +154,14 @@ export default function IndexPage() {
   const handleClassOk = () => {
     setClassVisible(false);
     form_class.resetFields();
+  };
+  const handleRemoveClassOk = () => {
+    setRemoveClassVisible(false);
+    form_removeclass.resetFields();
+  };
+  const handleRemoveAlgoOk = () => {
+    setRemoveAlgoVisible(false);
+    form_removealgo.resetFields();
   };
   const handleAlgoCancel = () => {
     setAlgoVisible(false);
@@ -148,9 +173,11 @@ export default function IndexPage() {
   };
   const handleRemoveClassCancel = () => {
     setRemoveClassVisible(false);
+    form_removeclass.resetFields();
   };
   const handleRemoveAlgoCancel = () => {
     setRemoveAlgoVisible(false);
+    form_removealgo.resetFields();
   };
 
   const SubmitClassification = () => {
@@ -164,7 +191,7 @@ export default function IndexPage() {
       };
       console.log(data);
       request(
-        'https://0y5wxsu5t0.execute-api.us-east-2.amazonaws.com/Alpha/classification/add',
+        'https://n63zuarfta.execute-api.us-east-2.amazonaws.com/Alpha/classification/add',
         {
           method: 'POST',
           data,
@@ -176,6 +203,7 @@ export default function IndexPage() {
       });
     });
   };
+
   const SubmitAlgorithm = () => {
     form_algo.validateFields().then(() => {
       const { cid, name, introduction, content, timecplx, spacecplx } =
@@ -192,7 +220,7 @@ export default function IndexPage() {
       };
       console.log(data);
       request(
-        'https://0y5wxsu5t0.execute-api.us-east-2.amazonaws.com/Alpha/classification/Algorithm/add',
+        'https://n63zuarfta.execute-api.us-east-2.amazonaws.com/Alpha/classification/Algorithm/add',
         {
           method: 'POST',
           data,
@@ -200,6 +228,52 @@ export default function IndexPage() {
       ).then((res) => {
         message.success(res.msg);
         handleAlgoOk();
+        history.push('/');
+      });
+    });
+  };
+
+  const RemoveClassification = () => {
+    form_removeclass.validateFields().then(() => {
+      const { cid } = form_removeclass.getFieldsValue();
+      const data = {
+        cid: cid,
+        uid: uid,
+      };
+      console.log(data);
+      request(
+        'https://n63zuarfta.execute-api.us-east-2.amazonaws.com/Alpha/classification/remove',
+        {
+          method: 'POST',
+          data,
+        },
+      ).then((res) => {
+        message.success(res.msg);
+        handleRemoveClassOk();
+        history.push('/');
+      });
+    });
+  };
+
+  const RemoveAlgorithm = () => {
+    form_removealgo.validateFields().then(() => {
+      const { aid } = form_algo.getFieldsValue();
+      const data = {
+        url: '',
+        aid: aid,
+        uid: uid,
+        name: name,
+      };
+      console.log(data);
+      request(
+        'https://n63zuarfta.execute-api.us-east-2.amazonaws.com/Alpha/classification/Algorithm/remove',
+        {
+          method: 'POST',
+          data,
+        },
+      ).then((res) => {
+        message.success(res.msg);
+        handleRemoveAlgoOk();
         history.push('/');
       });
     });
@@ -471,11 +545,13 @@ export default function IndexPage() {
                 >
                   Cancel
                 </Button>,
-                <Button type="primary">Remove</Button>,
+                <Button type="primary" onClick={() => RemoveClassification()}>
+                  Remove
+                </Button>,
               ]}
               onCancel={handleRemoveClassCancel}
             >
-              <Form form={form_class}>
+              <Form form={form_removeclass}>
                 <Form.Item
                   name="cid"
                   rules={[
@@ -508,13 +584,15 @@ export default function IndexPage() {
                 <Button type="primary" onClick={() => handleRemoveAlgoCancel()}>
                   Cancel
                 </Button>,
-                <Button type="primary">Remove</Button>,
+                <Button type="primary" onClick={() => RemoveAlgorithm()}>
+                  Remove
+                </Button>,
               ]}
               onCancel={handleRemoveAlgoCancel}
             >
-              <Form form={form_class}>
+              <Form form={form_removealgo}>
                 <Form.Item
-                  name="cid"
+                  name="aid"
                   rules={[
                     {
                       required: true,
@@ -533,7 +611,7 @@ export default function IndexPage() {
                     treeDefaultExpandAll
                     onChange={onTreeChange}
                   >
-                    {dataTree}
+                    {algoData}
                   </TreeSelect>
                 </Form.Item>
               </Form>
