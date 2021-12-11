@@ -17,6 +17,8 @@ import {
 } from 'antd';
 import ProCard from '@ant-design/pro-card';
 import Field from '@ant-design/pro-field';
+import type { ProColumns } from '@ant-design/pro-table';
+import ProTable, { TableDropdown } from '@ant-design/pro-table';
 interface params {
   aid: string;
 }
@@ -29,6 +31,14 @@ interface info {
   spacecplx: string;
 }
 
+export type TableListItem = {
+  iid: string;
+  author: string;
+  language: string;
+  time: string;
+  code: string;
+};
+
 export default function (params: params) {
   const { aid } = params;
   const [form_imp] = Form.useForm();
@@ -40,6 +50,7 @@ export default function (params: params) {
   const [text, setText] = useState<any>();
   const [algoInfo, setAlgoInfo] = useState<info>();
   const [refresh, setRefresh] = useState<boolean>(false);
+  // const [tableSource, setTableSource] = useState<TableListItem[]>();
   const uid = localStorage.getItem('ams_uid');
 
   const { Title, Paragraph, Text, Link } = Typography;
@@ -106,9 +117,9 @@ export default function (params: params) {
   useEffect(() => {
     getAlgorithm().then((res) => {
       const { algorithmMap } = res.data;
-      const fieldList = getField(res.data);
+      // const fieldList = getTableList(res.data);
       setAlgoInfo(algorithmMap);
-      setText(fieldList);
+      // setTableSource(fieldList)
     });
   }, [aid]);
 
@@ -116,15 +127,21 @@ export default function (params: params) {
     refresh && setTimeout(() => setRefresh(false));
   }, [refresh]);
 
-  const getField = (data: any) => {
+  const getTableList = (data: any): TableListItem[] => {
+    const tableListDataSource: TableListItem[] = [];
     const { implementationList } = data;
-    return Object.values(implementationList).map((item: any, index: any) => {
-      return (
-        <Descriptions.Item label={item.language}>
-          <Field mode="read" valueType="code" text={item.code} />
-        </Descriptions.Item>
-      );
+    Object.values(implementationList).map((item: any, index: any) => {
+      const { code, iid, author, language, time, aid } = item;
+      tableListDataSource.push(item);
+      //   ({
+      //   iid: iid,
+      //   code: code,
+      //   author: author,
+      //   language: language,
+      //   time: time,
+      // })
     });
+    return tableListDataSource;
   };
 
   const addImplementation = () => {
@@ -206,6 +223,35 @@ export default function (params: params) {
     });
   };
 
+  const columns: ProColumns<TableListItem>[] = [
+    {
+      title: 'Language',
+      dataIndex: 'language',
+    },
+    {
+      title: 'Author',
+      dataIndex: 'author',
+      search: false,
+    },
+    {
+      title: 'Upload Time',
+      dataIndex: 'time',
+      search: false,
+    },
+    {
+      title: 'Operate',
+      valueType: 'option',
+      render: (text, row) => {
+        return (
+          <>
+            <Button type="primary">View Code</Button>
+            <Button>View Problem Instance</Button>
+          </>
+        );
+      },
+    },
+  ];
+
   return (
     <div>
       <Title>{algoInfo?.name}</Title>
@@ -237,11 +283,19 @@ export default function (params: params) {
           </Col>
         </Row>
       </div>
-      ,<Title level={2}>Implementation</Title>
-      <Descriptions layout="vertical" column={1}>
+      <Title level={2}>Implementation</Title>
+      {/* <Descriptions layout="vertical" column={1}>
         {text}
-      </Descriptions>
-      <Title level={2}>Problem Instance</Title>
+      </Descriptions> */}
+      {/* <ProTable<TableListItem>
+        columns={columns}
+        headerTitle='Implementation'
+        // request={async (params) => {
+
+        // }}
+      >
+
+      </ProTable> */}
       <Space>
         <Button
           type="primary"
