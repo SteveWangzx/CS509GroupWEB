@@ -55,7 +55,10 @@ export default function (params: params) {
   // const [tableSource, setTableSource] = useState<TableListItem[]>();
   const uid = localStorage.getItem('ams_uid');
   const { Option } = Select;
-
+  const [value, setValue] = useState<string>('');
+  const onChange = () => {
+    setValue(value);
+  };
   const { Title, Paragraph, Text, Link } = Typography;
 
   const handleImpOk = () => {
@@ -177,12 +180,13 @@ export default function (params: params) {
   const addProblemInstance = () => {
     form_ins.validateFields().then(() => {
       const data_form = form_ins.getFieldsValue();
-      const { input, output } = data_form;
+      const { input, output, timeComplexityType } = data_form;
       const data = {
         aid: aid,
         input: input,
         output: output,
         uid: uid,
+        timeComplexityType: timeComplexityType,
       };
       request(
         'https://n63zuarfta.execute-api.us-east-2.amazonaws.com/Alpha/classification/ProblemInstance/add',
@@ -379,12 +383,13 @@ export default function (params: params) {
           <Form.Item name="output" label="output">
             <Input />
           </Form.Item>
-          <span>timeComplexityType :</span>
-          <Select style={{ width: 300 }} defaultValue={'0-worst case'}>
-            <Option value="0">0-worst case</Option>
-            <Option value="1">1-best case</Option>
-            <Option value="2">2-normal case</Option>
-          </Select>
+          <Form.Item name="timeComplexityType" label="timeComplexityType">
+            <Select style={{ width: 300 }} onChange={onChange} value={value}>
+              <Option value="0">0-worst case</Option>
+              <Option value="1">1-best case</Option>
+              <Option value="2">2-normal case</Option>
+            </Select>
+          </Form.Item>
         </Form>
       </Modal>
       <Modal
