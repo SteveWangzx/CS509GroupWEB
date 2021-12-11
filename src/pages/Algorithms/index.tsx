@@ -14,6 +14,8 @@ import {
   Card,
   Col,
   Row,
+  Menu,
+  Select,
 } from 'antd';
 import ProCard from '@ant-design/pro-card';
 import Field from '@ant-design/pro-field';
@@ -41,6 +43,7 @@ export default function (params: params) {
   const [algoInfo, setAlgoInfo] = useState<info>();
   const [refresh, setRefresh] = useState<boolean>(false);
   const uid = localStorage.getItem('ams_uid');
+  const { Option } = Select;
 
   const { Title, Paragraph, Text, Link } = Typography;
 
@@ -157,11 +160,11 @@ export default function (params: params) {
   const addProblemInstance = () => {
     form_ins.validateFields().then(() => {
       const data_form = form_ins.getFieldsValue();
-      const { instance, type } = data_form;
+      const { input, output } = data_form;
       const data = {
         aid: aid,
-        instance: instance,
-        type: type,
+        input: input,
+        output: output,
         uid: uid,
       };
       request(
@@ -205,6 +208,20 @@ export default function (params: params) {
         });
     });
   };
+
+  /*const Insmenu = (
+    <Menu>
+      <Menu.Item key="0">
+        0-worst case
+      </Menu.Item>
+      <Menu.Item key="1">
+        1-best case
+      </Menu.Item>
+      <Menu.Item key="2">
+        2-normal case
+      </Menu.Item>
+    </Menu>
+  )*/
 
   return (
     <div>
@@ -316,12 +333,18 @@ export default function (params: params) {
         onCancel={handleInsCancel}
       >
         <Form form={form_ins}>
-          <Form.Item name="instance" label="problem instance">
-            <Input.TextArea />
-          </Form.Item>
-          <Form.Item name="type" label="type">
+          <Form.Item name="input" label="input">
             <Input />
           </Form.Item>
+          <Form.Item name="output" label="output">
+            <Input />
+          </Form.Item>
+          <span>timeComplexityType :</span>
+          <Select style={{ width: 300 }} defaultValue={'0-worst case'}>
+            <Option value="0">0-worst case</Option>
+            <Option value="1">1-best case</Option>
+            <Option value="2">2-normal case</Option>
+          </Select>
         </Form>
       </Modal>
       <Modal
