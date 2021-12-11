@@ -228,7 +228,7 @@ export default function (params: params) {
           }
         }}
       >
-        add Implementation
+        Add Implementation
       </Button>
       <Button
         type="primary"
@@ -240,7 +240,7 @@ export default function (params: params) {
           }
         }}
       >
-        add Problem Instance
+        Add Problem Instance
       </Button>
       <Button
         type="primary"
@@ -252,7 +252,7 @@ export default function (params: params) {
           }
         }}
       >
-        remove Implementation
+        Remove Implementation
       </Button>
       <Modal
         title="Add Implementation"
@@ -312,11 +312,8 @@ export default function (params: params) {
         onCancel={handleRemoveImpCancel}
       >
         <Form form={form_removeimp}>
-          <Form.Item name="language" label="language">
+          <Form.Item name="iid" label="implementation">
             <Input />
-          </Form.Item>
-          <Form.Item name="code" label="implementation">
-            <Input.TextArea />
           </Form.Item>
         </Form>
       </Modal>

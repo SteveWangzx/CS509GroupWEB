@@ -28,11 +28,16 @@ export default function IndexPage() {
   const [AlgoVisible, setAlgoVisible] = useState<boolean>(false);
   const [RemoveClassVisible, setRemoveClassVisible] = useState<boolean>(false);
   const [RemoveAlgoVisible, setRemoveAlgoVisible] = useState<boolean>(false);
+  const [MergeClassVisible, setMergeClassVisible] = useState<boolean>(false);
+  const [ReclassifyAlgoVisible, setReclassifyAlgoVisible] =
+    useState<boolean>(false);
   const [value, setValue] = useState(undefined);
   const [form_class] = Form.useForm();
   const [form_algo] = Form.useForm();
   const [form_removeclass] = Form.useForm();
   const [form_removealgo] = Form.useForm();
+  const [form_mergeclass] = Form.useForm();
+  const [form_reclassifyalgo] = Form.useForm();
   const [algoParam, setAlgoParam] = useState<any>('0');
   const [refresh, setRefresh] = useState<boolean>(false);
 
@@ -146,6 +151,14 @@ export default function IndexPage() {
     setRemoveAlgoVisible(true);
     form_removealgo.resetFields();
   };
+  const showMergeClassModal = () => {
+    setMergeClassVisible(true);
+    form_mergeclass.resetFields();
+  };
+  const showReclassifyAlgoModal = () => {
+    setReclassifyAlgoVisible(true);
+    form_reclassifyalgo.resetFields();
+  };
   const handleAlgoOk = () => {
     setAlgoVisible(false);
     form_algo.resetFields();
@@ -163,6 +176,14 @@ export default function IndexPage() {
     setRemoveAlgoVisible(false);
     form_removealgo.resetFields();
   };
+  const handleMergeClassOk = () => {
+    setMergeClassVisible(true);
+    form_mergeclass.resetFields();
+  };
+  const handleReclassifyAlgoOk = () => {
+    setReclassifyAlgoVisible(true);
+    form_reclassifyalgo.resetFields();
+  };
   const handleAlgoCancel = () => {
     setAlgoVisible(false);
     form_algo.resetFields();
@@ -178,6 +199,14 @@ export default function IndexPage() {
   const handleRemoveAlgoCancel = () => {
     setRemoveAlgoVisible(false);
     form_removealgo.resetFields();
+  };
+  const handleMergeClassCancel = () => {
+    setMergeClassVisible(false);
+    form_mergeclass.resetFields();
+  };
+  const handleReclassifyAlgoCancel = () => {
+    setReclassifyAlgoVisible(false);
+    form_reclassifyalgo.resetFields();
   };
 
   const SubmitClassification = () => {
@@ -257,12 +286,11 @@ export default function IndexPage() {
 
   const RemoveAlgorithm = () => {
     form_removealgo.validateFields().then(() => {
-      const { aid } = form_algo.getFieldsValue();
+      const { aid } = form_removealgo.getFieldsValue();
       const data = {
         url: '',
         aid: aid,
         uid: uid,
-        name: name,
       };
       console.log(data);
       request(
@@ -274,6 +302,54 @@ export default function IndexPage() {
       ).then((res) => {
         message.success(res.msg);
         handleRemoveAlgoOk();
+        history.push('/');
+      });
+    });
+  };
+
+  const MergeClassification = () => {
+    form_mergeclass.validateFields().then(() => {
+      const { cid1, cid2 } = form_mergeclass.getFieldsValue();
+      const data = {
+        url: '',
+        cid1: cid1,
+        cid2: cid2,
+        uid: uid,
+      };
+      console.log(data);
+      request(
+        'https://n63zuarfta.execute-api.us-east-2.amazonaws.com/Alpha/classification/merge',
+        {
+          method: 'POST',
+          data,
+        },
+      ).then((res) => {
+        message.success(res.msg);
+        handleMergeClassOk();
+        history.push('/');
+      });
+    });
+  };
+
+  const ReclassifyAlgorithm = () => {
+    form_reclassifyalgo.validateFields().then(() => {
+      const { cid, aid } = form_reclassifyalgo.getFieldsValue();
+      const data = {
+        url: '',
+        parentcid: cid,
+        aid: aid,
+        uid: uid,
+      };
+      console.log(data);
+      request(
+        'https://n63zuarfta.execute-api.us-east-2.amazonaws.com/Alpha/classification/Algorithm/reclassify',
+        {
+          method: 'POST',
+          data,
+        },
+      ).then((res) => {
+        message.success(res.msg);
+        handleReclassifyAlgoOk();
         history.push('/');
       });
     });
@@ -327,7 +403,7 @@ export default function IndexPage() {
                 }
               }}
             >
-              add Classification
+              Add Classification
             </Button>
             <Button
               type="primary"
@@ -340,7 +416,7 @@ export default function IndexPage() {
                 }
               }}
             >
-              add Algorithm
+              Add Algorithm
             </Button>
             <Button
               type="primary"
@@ -353,7 +429,7 @@ export default function IndexPage() {
                 }
               }}
             >
-              remove classification
+              Remove Classification
             </Button>
             <Button
               type="primary"
@@ -366,7 +442,33 @@ export default function IndexPage() {
                 }
               }}
             >
-              remove Algorithm
+              Remove Algorithm
+            </Button>
+            <Button
+              type="primary"
+              style={{ display: 'inline' }}
+              onClick={() => {
+                if (localStorage.getItem('ams_uname')) {
+                  showMergeClassModal();
+                } else {
+                  message.error('Please login to operate');
+                }
+              }}
+            >
+              Merge Classification
+            </Button>
+            <Button
+              type="primary"
+              style={{ display: 'inline' }}
+              onClick={() => {
+                if (localStorage.getItem('ams_uname')) {
+                  showReclassifyAlgoModal();
+                } else {
+                  message.error('Please login to operate');
+                }
+              }}
+            >
+              Reclassify Algorithm
             </Button>
             <Modal
               title="Add Classification"
@@ -612,6 +714,133 @@ export default function IndexPage() {
                     onChange={onTreeChange}
                   >
                     {algoData}
+                  </TreeSelect>
+                </Form.Item>
+              </Form>
+            </Modal>
+            <Modal
+              title="merge classification"
+              visible={MergeClassVisible}
+              footer={[
+                <Button type="primary" onClick={() => handleMergeClassCancel()}>
+                  Cancel
+                </Button>,
+                <Button type="primary" onClick={() => MergeClassification()}>
+                  Merge
+                </Button>,
+              ]}
+              onCancel={handleMergeClassCancel}
+            >
+              <Form form={form_mergeclass}>
+                <Form.Item
+                  name="cid1"
+                  rules={[
+                    {
+                      required: true,
+                      message: 'Must select a classification',
+                    },
+                  ]}
+                  label="Classification 1"
+                >
+                  <TreeSelect
+                    showSearch
+                    style={{ width: '100%' }}
+                    value={value}
+                    dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+                    placeholder="Please select classification"
+                    allowClear
+                    treeDefaultExpandAll
+                    onChange={onTreeChange}
+                  >
+                    {dataTree}
+                  </TreeSelect>
+                </Form.Item>
+                <Form.Item
+                  name="cid2"
+                  rules={[
+                    {
+                      required: true,
+                      message: 'Must select a classification',
+                    },
+                  ]}
+                  label="Classification 2"
+                >
+                  <TreeSelect
+                    showSearch
+                    style={{ width: '100%' }}
+                    value={value}
+                    dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+                    placeholder="Please select classification"
+                    allowClear
+                    treeDefaultExpandAll
+                    onChange={onTreeChange}
+                  >
+                    {dataTree}
+                  </TreeSelect>
+                </Form.Item>
+              </Form>
+            </Modal>
+            <Modal
+              title="reclassify Algorithm"
+              visible={ReclassifyAlgoVisible}
+              footer={[
+                <Button
+                  type="primary"
+                  onClick={() => handleReclassifyAlgoCancel()}
+                >
+                  Cancel
+                </Button>,
+                <Button type="primary" onClick={() => ReclassifyAlgorithm()}>
+                  Reclassify
+                </Button>,
+              ]}
+              onCancel={handleReclassifyAlgoCancel}
+            >
+              <Form form={form_reclassifyalgo}>
+                <Form.Item
+                  name="aid"
+                  rules={[
+                    {
+                      required: true,
+                      message: 'Must select a algorithm',
+                    },
+                  ]}
+                  label="Algorithm"
+                >
+                  <TreeSelect
+                    showSearch
+                    style={{ width: '100%' }}
+                    value={value}
+                    dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+                    placeholder="Please select algorithm"
+                    allowClear
+                    treeDefaultExpandAll
+                    onChange={onTreeChange}
+                  >
+                    {algoData}
+                  </TreeSelect>
+                </Form.Item>
+                <Form.Item
+                  name="cid"
+                  rules={[
+                    {
+                      required: true,
+                      message: 'Must select a classification',
+                    },
+                  ]}
+                  label="New Classification"
+                >
+                  <TreeSelect
+                    showSearch
+                    style={{ width: '100%' }}
+                    value={value}
+                    dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+                    placeholder="Please select classification"
+                    allowClear
+                    treeDefaultExpandAll
+                    onChange={onTreeChange}
+                  >
+                    {dataTree}
                   </TreeSelect>
                 </Form.Item>
               </Form>
