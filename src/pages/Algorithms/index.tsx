@@ -9,7 +9,13 @@ import {
   message,
   Typography,
   Descriptions,
+  Space,
+  Rate,
+  Card,
+  Col,
+  Row,
 } from 'antd';
+import ProCard from '@ant-design/pro-card';
 import Field from '@ant-design/pro-field';
 interface params {
   aid: string;
@@ -203,57 +209,77 @@ export default function (params: params) {
   return (
     <div>
       <Title>{algoInfo?.name}</Title>
-      <Title level={2}>INTRODUCTION</Title>
+      <Rate />
+      <Title level={2}>Introduction</Title>
+      {/* <ProCard title="Introduction" extra="extra" tooltip="Introduction" style={{ maxWidth: 1100 }} headerBordered>
+        {algoInfo?.introduction}
+      </ProCard> */}
       <Paragraph>{algoInfo?.introduction}</Paragraph>
-      <Title level={2}>CONTENT</Title>
+      <Title level={2}>Content</Title>
       <Paragraph>{algoInfo?.content}</Paragraph>
       <Title level={2}>Algorithm Complexity</Title>
-      <Paragraph>
+      {/* <Paragraph>
         Time complexity:{algoInfo?.timecplx}
         <br />
         Space complexity:{algoInfo?.spacecplx}
-      </Paragraph>
-      <Title level={2}>Implementation</Title>
+      </Paragraph> */}
+      <div className="site-card-wrapper">
+        <Row gutter={16}>
+          <Col span={5}>
+            <Card title="Time Complexity" bordered={false}>
+              {algoInfo?.timecplx}
+            </Card>
+          </Col>
+          <Col span={5}>
+            <Card title="Space Complexity" bordered={false}>
+              {algoInfo?.spacecplx}
+            </Card>
+          </Col>
+        </Row>
+      </div>
+      ,<Title level={2}>Implementation</Title>
       <Descriptions layout="vertical" column={1}>
         {text}
       </Descriptions>
       <Title level={2}>Problem Instance</Title>
-      <Button
-        type="primary"
-        onClick={() => {
-          if (localStorage.getItem('ams_uname')) {
-            handleImpClick();
-          } else {
-            message.error('Please login to operate');
-          }
-        }}
-      >
-        Add Implementation
-      </Button>
-      <Button
-        type="primary"
-        onClick={() => {
-          if (localStorage.getItem('ams_uname')) {
-            handleInsClick();
-          } else {
-            message.error('Please login to operate');
-          }
-        }}
-      >
-        Add Problem Instance
-      </Button>
-      <Button
-        type="primary"
-        onClick={() => {
-          if (localStorage.getItem('ams_uname')) {
-            handleRemoveImpClick();
-          } else {
-            message.error('Please login to operate');
-          }
-        }}
-      >
-        Remove Implementation
-      </Button>
+      <Space>
+        <Button
+          type="primary"
+          onClick={() => {
+            if (localStorage.getItem('ams_uname')) {
+              handleImpClick();
+            } else {
+              message.error('Please login to operate');
+            }
+          }}
+        >
+          Add Implementation
+        </Button>
+        <Button
+          type="primary"
+          onClick={() => {
+            if (localStorage.getItem('ams_uname')) {
+              handleInsClick();
+            } else {
+              message.error('Please login to operate');
+            }
+          }}
+        >
+          Add Problem Instance
+        </Button>
+        <Button
+          type="primary"
+          onClick={() => {
+            if (localStorage.getItem('ams_uname')) {
+              handleRemoveImpClick();
+            } else {
+              message.error('Please login to operate');
+            }
+          }}
+        >
+          Remove Implementation
+        </Button>
+      </Space>
       <Modal
         title="Add Implementation"
         visible={addImpVisible}

@@ -8,6 +8,7 @@ import {
   Form,
   Input,
   message,
+  Space,
 } from 'antd';
 import { request, history } from 'umi';
 import SearchForm from '@/components/RightContent/SearchForm';
@@ -392,84 +393,86 @@ export default function IndexPage() {
               marginLeft: '24px',
             }}
           >
-            <Button
-              type="primary"
-              style={{ display: 'inline' }}
-              onClick={() => {
-                if (localStorage.getItem('ams_uname')) {
-                  showClassModel();
-                } else {
-                  message.error('Please login to operate');
-                }
-              }}
-            >
-              Add Classification
-            </Button>
-            <Button
-              type="primary"
-              style={{ display: 'inline' }}
-              onClick={() => {
-                if (localStorage.getItem('ams_uname')) {
-                  showAlgoModal();
-                } else {
-                  message.error('Please login to operate');
-                }
-              }}
-            >
-              Add Algorithm
-            </Button>
-            <Button
-              type="primary"
-              style={{ display: 'inline' }}
-              onClick={() => {
-                if (localStorage.getItem('ams_uname')) {
-                  showRemoveClassModal();
-                } else {
-                  message.error('Please login to operate');
-                }
-              }}
-            >
-              Remove Classification
-            </Button>
-            <Button
-              type="primary"
-              style={{ display: 'inline' }}
-              onClick={() => {
-                if (localStorage.getItem('ams_uname')) {
-                  showRemoveAlgoModal();
-                } else {
-                  message.error('Please login to operate');
-                }
-              }}
-            >
-              Remove Algorithm
-            </Button>
-            <Button
-              type="primary"
-              style={{ display: 'inline' }}
-              onClick={() => {
-                if (localStorage.getItem('ams_uname')) {
-                  showMergeClassModal();
-                } else {
-                  message.error('Please login to operate');
-                }
-              }}
-            >
-              Merge Classification
-            </Button>
-            <Button
-              type="primary"
-              style={{ display: 'inline' }}
-              onClick={() => {
-                if (localStorage.getItem('ams_uname')) {
-                  showReclassifyAlgoModal();
-                } else {
-                  message.error('Please login to operate');
-                }
-              }}
-            >
-              Reclassify Algorithm
-            </Button>
+            <Space>
+              <Button
+                type="primary"
+                style={{ display: 'inline' }}
+                onClick={() => {
+                  if (localStorage.getItem('ams_uname')) {
+                    showClassModel();
+                  } else {
+                    message.error('Please login to operate');
+                  }
+                }}
+              >
+                Add Classification
+              </Button>
+              <Button
+                type="primary"
+                style={{ display: 'inline' }}
+                onClick={() => {
+                  if (localStorage.getItem('ams_uname')) {
+                    showAlgoModal();
+                  } else {
+                    message.error('Please login to operate');
+                  }
+                }}
+              >
+                Add Algorithm
+              </Button>
+              <Button
+                type="primary"
+                style={{ display: 'inline' }}
+                onClick={() => {
+                  if (localStorage.getItem('ams_uname')) {
+                    showRemoveClassModal();
+                  } else {
+                    message.error('Please login to operate');
+                  }
+                }}
+              >
+                Remove Classification
+              </Button>
+              <Button
+                type="primary"
+                style={{ display: 'inline' }}
+                onClick={() => {
+                  if (localStorage.getItem('ams_uname')) {
+                    showRemoveAlgoModal();
+                  } else {
+                    message.error('Please login to operate');
+                  }
+                }}
+              >
+                Remove Algorithm
+              </Button>
+              <Button
+                type="primary"
+                style={{ display: 'inline' }}
+                onClick={() => {
+                  if (localStorage.getItem('ams_uname')) {
+                    showMergeClassModal();
+                  } else {
+                    message.error('Please login to operate');
+                  }
+                }}
+              >
+                Merge Classification
+              </Button>
+              <Button
+                type="primary"
+                style={{ display: 'inline' }}
+                onClick={() => {
+                  if (localStorage.getItem('ams_uname')) {
+                    showReclassifyAlgoModal();
+                  } else {
+                    message.error('Please login to operate');
+                  }
+                }}
+              >
+                Reclassify Algorithm
+              </Button>
+            </Space>
             <Modal
               title="Add Classification"
               visible={ClassVisible}

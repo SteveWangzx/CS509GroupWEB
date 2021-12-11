@@ -24,10 +24,13 @@ export default function () {
         <Text code>'C:'</Text>represents classification and{' '}
         <Text code>'A:' </Text>represents algorithm
         <br />
+        <br />
         You can use the buttons above to edit menu.
+        <br />
         <br />
         To add implmentation for an algorithm, just click the algorithm you want
         to edit then click the button below.
+        <br />
         <br /> Sometimes implementation could load for a while.
       </Paragraph>
     </Typography>
