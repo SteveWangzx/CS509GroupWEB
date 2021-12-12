@@ -19,25 +19,15 @@ import ProCard from '@ant-design/pro-card';
 import Field from '@ant-design/pro-field';
 import type { ProColumns } from '@ant-design/pro-table';
 import ProTable, { TableDropdown } from '@ant-design/pro-table';
+import type {
+  info,
+  TableListItem,
+  ImplementationParams,
+} from '@/services/TypeAlgorithm';
+import { FetchImplementationList } from '@/services/TypeAlgorithm';
 interface params {
   aid: string;
 }
-
-interface info {
-  name: string;
-  introduction: string;
-  content: string;
-  timecplx: string;
-  spacecplx: string;
-}
-
-export type TableListItem = {
-  iid: string;
-  author: string;
-  language: string;
-  time: string;
-  code: string;
-};
 
 export default function (params: params) {
   const { aid } = params;
@@ -119,30 +109,12 @@ export default function (params: params) {
       const { algorithmMap } = res.data;
       // const fieldList = getTableList(res.data);
       setAlgoInfo(algorithmMap);
-      // setTableSource(fieldList)
     });
   }, [aid]);
 
   useEffect(() => {
     refresh && setTimeout(() => setRefresh(false));
   }, [refresh]);
-
-  const getTableList = (data: any): TableListItem[] => {
-    const tableListDataSource: TableListItem[] = [];
-    const { implementationList } = data;
-    Object.values(implementationList).map((item: any, index: any) => {
-      const { code, iid, author, language, time, aid } = item;
-      tableListDataSource.push(item);
-      //   ({
-      //   iid: iid,
-      //   code: code,
-      //   author: author,
-      //   language: language,
-      //   time: time,
-      // })
-    });
-    return tableListDataSource;
-  };
 
   const addImplementation = () => {
     form_imp.validateFields().then(() => {
@@ -287,15 +259,20 @@ export default function (params: params) {
       {/* <Descriptions layout="vertical" column={1}>
         {text}
       </Descriptions> */}
-      {/* <ProTable<TableListItem>
+      <ProTable<TableListItem>
         columns={columns}
-        headerTitle='Implementation'
-        // request={async (params) => {
-
-        // }}
-      >
-
-      </ProTable> */}
+        headerTitle="Implementation"
+        request={async (params, sort) => {
+          const handleData: ImplementationParams = {
+            aid: aid,
+            uid: uid as string,
+          };
+          const { data } = await FetchImplementationList(handleData);
+          return {
+            data,
+          };
+        }}
+      ></ProTable>
       <Space>
         <Button
           type="primary"

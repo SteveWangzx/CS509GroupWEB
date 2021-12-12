@@ -2,7 +2,7 @@ declare namespace ResType {
   export type Normal<T> = {
     success: boolean;
     code: number;
-    message: string;
+    msg: string;
     data: T;
   };
 
