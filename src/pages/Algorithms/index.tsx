@@ -1,6 +1,6 @@
 import { request } from '@/.umi/plugin-request/request';
 import { history } from 'umi';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
   Button,
   Form,
@@ -16,10 +16,12 @@ import {
   Row,
   Menu,
   Select,
+  ConfigProvider,
 } from 'antd';
 import ProCard from '@ant-design/pro-card';
 import Field from '@ant-design/pro-field';
-import type { ProColumns } from '@ant-design/pro-table';
+import { createIntl, IntlProvider, ProColumns } from '@ant-design/pro-table';
+import type { ActionType, ProColumnType } from '@ant-design/pro-table';
 import ProTable, { TableDropdown } from '@ant-design/pro-table';
 import type {
   info,
@@ -27,11 +29,22 @@ import type {
   ImplementationParams,
 } from '@/services/TypeAlgorithm';
 import { FetchImplementationList } from '@/services/TypeAlgorithm';
+import enUSIntl from 'antd/lib/locale/en_US';
 interface params {
   aid: string;
 }
 
+const intlMap = {
+  enUSIntl,
+};
+
 export default function (params: params) {
+  // const enUSIntl = createIntl('en_US', enLocale);
+  const [intl, setIntl] = useState<string>('enUSIntl');
+  // setting language for English
+
+  const actionRef = useRef<ActionType>();
+  // table auto refresh
   const { aid } = params;
   const [form_imp] = Form.useForm();
   const [form_ins] = Form.useForm();
@@ -61,11 +74,6 @@ export default function (params: params) {
     form_ins.resetFields();
   };
 
-  const handleRemoveImpOk = () => {
-    setRemoveImpVisible(false);
-    form_removeimp.resetFields();
-  };
-
   const handleImpCancel = () => {
     setImpVisible(false);
     form_imp.resetFields();
@@ -89,11 +97,6 @@ export default function (params: params) {
   const handleInsClick = () => {
     setInsVisible(true);
     form_ins.resetFields();
-  };
-
-  const handleRemoveImpClick = () => {
-    setRemoveImpVisible(true);
-    form_removeimp.resetFields();
   };
 
   const getAlgorithm = async () => {
@@ -140,11 +143,11 @@ export default function (params: params) {
         },
       )
         .then((res) => {
-          message.success('success');
+          message.success('add success');
         })
         .then((res) => {
           handleImpOk();
-          history.push('/');
+          actionRef?.current?.reload();
         });
     });
   };
@@ -177,35 +180,34 @@ export default function (params: params) {
     });
   };
 
-  const removeImplementation = () => {
-    form_removeimp.validateFields().then(() => {
-      const data_form = form_removeimp.getFieldsValue();
-      const { iid } = data_form;
-      const data = {
-        iid: iid,
-        uid: uid,
-      };
-      request(
-        'https://n63zuarfta.execute-api.us-east-2.amazonaws.com/Alpha/classification/Implementation/remove',
-        {
-          method: 'POST',
-          data,
-        },
-      )
-        .then((res) => {
-          message.success('success');
-        })
-        .then((res) => {
-          handleRemoveImpOk();
-          history.push('/');
-        });
-    });
+  const removeImplementation = (iid: string) => {
+    const data = {
+      iid: iid,
+      uid: uid,
+    };
+    request(
+      'https://n63zuarfta.execute-api.us-east-2.amazonaws.com/Alpha/classification/Implementation/remove',
+      {
+        method: 'POST',
+        data,
+      },
+    )
+      .then((res) => {
+        message.success('remove success');
+      })
+      .then((res) => {
+        actionRef?.current?.reload();
+      })
+      .catch((res) => {
+        message.error('remove failed');
+      });
   };
 
   const columns: ProColumns<TableListItem>[] = [
     {
       title: 'Language',
       dataIndex: 'language',
+      search: false,
     },
     {
       title: 'Author',
@@ -225,6 +227,18 @@ export default function (params: params) {
           <>
             <Button type="primary">View Code</Button>
             <Button>View Problem Instance</Button>
+            <Button
+              type="primary"
+              onClick={() => {
+                if (localStorage.getItem('ams_uname')) {
+                  removeImplementation(row.iid);
+                } else {
+                  message.error('Please login to operate');
+                }
+              }}
+            >
+              Remove Implementation
+            </Button>
           </>
         );
       },
@@ -266,33 +280,44 @@ export default function (params: params) {
       {/* <Descriptions layout="vertical" column={1}>
         {text}
       </Descriptions> */}
-      <ProTable<TableListItem>
-        columns={columns}
-        headerTitle="Implementation"
-        request={async (params, sort) => {
-          const handleData: ImplementationParams = {
-            aid: aid,
-            uid: uid as string,
-          };
-          const { data } = await FetchImplementationList(handleData);
-          return {
-            data,
-          };
-        }}
-      ></ProTable>
-      <Space>
-        <Button
-          type="primary"
-          onClick={() => {
-            if (localStorage.getItem('ams_uname')) {
-              handleImpClick();
-            } else {
-              message.error('Please login to operate');
-            }
+      <ConfigProvider locale={intlMap.enUSIntl}>
+        <ProTable<TableListItem>
+          columns={columns}
+          actionRef={actionRef}
+          headerTitle="Implementation"
+          request={async (params, sort) => {
+            const handleData: ImplementationParams = {
+              aid: aid,
+              uid: uid as string,
+            };
+            const { data } = await FetchImplementationList(handleData);
+            return {
+              data,
+            };
           }}
-        >
-          Add Implementation
-        </Button>
+          search={{
+            optionRender: false,
+            collapsed: false,
+          }}
+          toolBarRender={() => [
+            <>
+              <Button
+                type="primary"
+                onClick={() => {
+                  if (localStorage.getItem('ams_uname')) {
+                    handleImpClick();
+                  } else {
+                    message.error('Please login to operate');
+                  }
+                }}
+              >
+                Add Implementation
+              </Button>
+            </>,
+          ]}
+        ></ProTable>
+      </ConfigProvider>
+      <Space>
         <Button
           type="primary"
           onClick={() => {
@@ -304,18 +329,6 @@ export default function (params: params) {
           }}
         >
           Add Problem Instance
-        </Button>
-        <Button
-          type="primary"
-          onClick={() => {
-            if (localStorage.getItem('ams_uname')) {
-              handleRemoveImpClick();
-            } else {
-              message.error('Please login to operate');
-            }
-          }}
-        >
-          Remove Implementation
         </Button>
       </Space>
       <Modal
@@ -366,25 +379,6 @@ export default function (params: params) {
               <Option value="1">1-best case</Option>
               <Option value="2">2-normal case</Option>
             </Select>
-          </Form.Item>
-        </Form>
-      </Modal>
-      <Modal
-        title="Remove Implementation"
-        visible={removeImpVisible}
-        footer={[
-          <Button type="primary" onClick={() => handleRemoveImpCancel()}>
-            Cancel
-          </Button>,
-          <Button type="primary" onClick={() => removeImplementation()}>
-            Remove
-          </Button>,
-        ]}
-        onCancel={handleRemoveImpCancel}
-      >
-        <Form form={form_removeimp}>
-          <Form.Item name="iid" label="implementation">
-            <Input />
           </Form.Item>
         </Form>
       </Modal>
