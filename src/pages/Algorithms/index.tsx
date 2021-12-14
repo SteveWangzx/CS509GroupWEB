@@ -49,10 +49,8 @@ export default function (params: params) {
   // table auto refresh
   const { aid } = params;
   const [form_imp] = Form.useForm();
-  const [form_ins] = Form.useForm();
   const [form_removeimp] = Form.useForm();
   const [addImpVisible, setImpVisible] = useState<boolean>(false);
-  const [addInsVisible, setInsVisible] = useState<boolean>(false);
   const [removeImpVisible, setRemoveImpVisible] = useState<boolean>(false);
   const [codeVisible, setCodeVisible] = useState<boolean>(false);
   const [problemsVisible, setProblemsVisible] = useState<boolean>(false);
@@ -77,19 +75,9 @@ export default function (params: params) {
     form_imp.resetFields();
   };
 
-  const handleInsOk = () => {
-    setInsVisible(false);
-    form_ins.resetFields();
-  };
-
   const handleImpCancel = () => {
     setImpVisible(false);
     form_imp.resetFields();
-  };
-
-  const handleInsCancel = () => {
-    setInsVisible(false);
-    form_ins.resetFields();
   };
 
   const handleRemoveImpCancel = () => {
@@ -100,11 +88,6 @@ export default function (params: params) {
   const handleImpClick = () => {
     setImpVisible(true);
     form_imp.resetFields();
-  };
-
-  const handleInsClick = () => {
-    setInsVisible(true);
-    form_ins.resetFields();
   };
 
   const handleCodeClick = (code: string, language: string) => {
@@ -174,34 +157,6 @@ export default function (params: params) {
         })
         .then((res) => {
           handleImpOk();
-        });
-    });
-  };
-
-  const addProblemInstance = () => {
-    form_ins.validateFields().then(() => {
-      const data_form = form_ins.getFieldsValue();
-      const { input, output, timeComplexityType } = data_form;
-      const data = {
-        aid: aid,
-        input: input,
-        output: output,
-        uid: uid,
-        timeComplexityType: timeComplexityType,
-      };
-      request(
-        'https://n63zuarfta.execute-api.us-east-2.amazonaws.com/Alpha/classification/ProblemInstance/add',
-        {
-          method: 'POST',
-          data,
-        },
-      )
-        .then((res) => {
-          message.success('success');
-        })
-        .then((res) => {
-          handleInsOk();
-          history.push('/');
         });
     });
   };
@@ -359,20 +314,6 @@ export default function (params: params) {
           ]}
         ></ProTable>
       </ConfigProvider>
-      <Space>
-        <Button
-          type="primary"
-          onClick={() => {
-            if (localStorage.getItem('ams_uname')) {
-              handleInsClick();
-            } else {
-              message.error('Please login to operate');
-            }
-          }}
-        >
-          Add Problem Instance
-        </Button>
-      </Space>
 
       {/*modal for view code */}
 
@@ -399,6 +340,7 @@ export default function (params: params) {
         visible={problemsVisible}
         footer={false}
         onCancel={handleProblemCancel}
+        width={800}
       >
         <ProblemInstance aid={aid_params.current} iid={iid_params.current} />
       </Modal>
@@ -429,36 +371,6 @@ export default function (params: params) {
       </Modal>
 
       {/* modal for add Problem Instance */}
-
-      <Modal
-        title="Add Problem Instance"
-        visible={addInsVisible}
-        footer={[
-          <Button type="primary" onClick={() => handleInsCancel()}>
-            Cancel
-          </Button>,
-          <Button type="primary" onClick={() => addProblemInstance()}>
-            Submit
-          </Button>,
-        ]}
-        onCancel={handleInsCancel}
-      >
-        <Form form={form_ins}>
-          <Form.Item name="input" label="input">
-            <Input />
-          </Form.Item>
-          <Form.Item name="output" label="output">
-            <Input />
-          </Form.Item>
-          <Form.Item name="timeComplexityType" label="timeComplexityType">
-            <Select style={{ width: 300 }} onChange={onChange} value={value}>
-              <Option value="0">0-worst case</Option>
-              <Option value="1">1-best case</Option>
-              <Option value="2">2-normal case</Option>
-            </Select>
-          </Form.Item>
-        </Form>
-      </Modal>
     </div>
   );
 }
