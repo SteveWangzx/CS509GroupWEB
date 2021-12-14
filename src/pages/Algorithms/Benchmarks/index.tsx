@@ -115,7 +115,7 @@ export default function (params: benchParams) {
     },
     {
       title: 'Threads',
-      dataIndex: 'threads',
+      dataIndex: 'thread',
       search: false,
     },
     {
