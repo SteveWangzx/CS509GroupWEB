@@ -61,6 +61,7 @@ export default function (params: params) {
   const [refresh, setRefresh] = useState<boolean>(false);
   const [language, setLanguage] = useState<string>();
   const aid_params = useRef<string>('');
+  const iid_params = useRef<string>('');
   const [code, setCode] = useState<string>('');
   // const [tableSource, setTableSource] = useState<TableListItem[]>();
   const uid = localStorage.getItem('ams_uid');
@@ -258,7 +259,12 @@ export default function (params: params) {
             >
               View Code
             </Button>
-            <Button type="link" onClick={handleProblemClick}>
+            <Button
+              type="link"
+              onClick={() => {
+                handleProblemClick(), (iid_params.current = row.iid);
+              }}
+            >
               View Problem Instance
             </Button>
             <Button
@@ -392,7 +398,7 @@ export default function (params: params) {
         footer={false}
         onCancel={handleProblemCancel}
       >
-        <ProblemInstance aid={aid_params.current} />
+        <ProblemInstance aid={aid_params.current} iid={iid_params.current} />
       </Modal>
 
       {/* modal for Add Implementation */}
