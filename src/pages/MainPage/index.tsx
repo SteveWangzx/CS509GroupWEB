@@ -15,6 +15,7 @@ import SearchForm from '@/components/RightContent/SearchForm';
 import Algorithms from '@/pages/Algorithms';
 import Introduction from '@/pages/Introduction';
 import { userName } from 'config';
+import RegisterUser from '@/pages/RegisterUser';
 
 export default function IndexPage() {
   const { Sider, Content, Header } = Layout;
@@ -41,12 +42,16 @@ export default function IndexPage() {
   const [form_reclassifyalgo] = Form.useForm();
   const [algoParam, setAlgoParam] = useState<any>('0');
   const [refresh, setRefresh] = useState<boolean>(false);
+  const [renderPage, setRenderPage] = useState<any>();
 
   const onTreeChange = () => {
     setValue(value);
   };
   const handleClick = (info: any) => {
-    setAlgoParam(info.key);
+    const { key } = info;
+    setAlgoParam(key);
+    const render = conditionRender(key);
+    setRenderPage(render);
   };
 
   const testUrl = async () => {
@@ -263,6 +268,16 @@ export default function IndexPage() {
     });
   };
 
+  const conditionRender = (key: string) => {
+    if (key == '0') {
+      return <Introduction />;
+    } else if (key == 'admin1') {
+      return <RegisterUser />;
+    } else {
+      return <Algorithms aid={key as string} />;
+    }
+  };
+
   const RemoveClassification = () => {
     form_removeclass.validateFields().then(() => {
       const { cid } = form_removeclass.getFieldsValue();
@@ -381,6 +396,9 @@ export default function IndexPage() {
               Introduction
             </Menu.Item>
             {menuData}
+            <SubMenu key="admin" title="Admin">
+              <Menu.Item key="admin1">View Register Users</Menu.Item>
+            </SubMenu>
           </Menu>
         </Sider>
         <Layout style={{ marginLeft: 200 }}>
@@ -854,11 +872,7 @@ export default function IndexPage() {
             <div
               style={{ padding: '24px', minHeight: '360', background: '#FFF' }}
             >
-              {algoParam && algoParam == '0' ? (
-                <Introduction />
-              ) : (
-                <Algorithms aid={algoParam as string} />
-              )}
+              {algoParam && algoParam == '0' ? <Introduction /> : renderPage}
             </div>
           </Content>
         </Layout>
