@@ -369,7 +369,6 @@ export default function IndexPage() {
             left: 0,
           }}
         >
-          <SearchForm />
           <Menu
             theme="dark"
             mode="inline"

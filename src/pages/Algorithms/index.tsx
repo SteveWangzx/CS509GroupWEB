@@ -30,6 +30,8 @@ import type {
 } from '@/services/TypeAlgorithm';
 import { FetchImplementationList } from '@/services/TypeAlgorithm';
 import enUSIntl from 'antd/lib/locale/en_US';
+import ProblemInstance from '@/pages/Algorithms/ProblemInstance';
+
 interface params {
   aid: string;
 }
@@ -52,9 +54,14 @@ export default function (params: params) {
   const [addImpVisible, setImpVisible] = useState<boolean>(false);
   const [addInsVisible, setInsVisible] = useState<boolean>(false);
   const [removeImpVisible, setRemoveImpVisible] = useState<boolean>(false);
+  const [codeVisible, setCodeVisible] = useState<boolean>(false);
+  const [problemsVisible, setProblemsVisible] = useState<boolean>(false);
   const [text, setText] = useState<any>();
   const [algoInfo, setAlgoInfo] = useState<info>();
   const [refresh, setRefresh] = useState<boolean>(false);
+  const [language, setLanguage] = useState<string>();
+  const aid_params = useRef<string>('');
+  const [code, setCode] = useState<string>('');
   // const [tableSource, setTableSource] = useState<TableListItem[]>();
   const uid = localStorage.getItem('ams_uid');
   const { Option } = Select;
@@ -99,6 +106,22 @@ export default function (params: params) {
     form_ins.resetFields();
   };
 
+  const handleCodeClick = (code: string, language: string) => {
+    setCodeVisible(true);
+    setCode(code);
+    setLanguage(language);
+  };
+  const handleCodeCancel = () => {
+    setCodeVisible(false);
+  };
+
+  const handleProblemClick = () => {
+    setProblemsVisible(true);
+  };
+
+  const handleProblemCancel = () => {
+    setProblemsVisible(false);
+  };
   const getAlgorithm = async () => {
     const res = await request(
       'https://n63zuarfta.execute-api.us-east-2.amazonaws.com/Alpha/classification/Algorithm',
@@ -114,6 +137,7 @@ export default function (params: params) {
   };
 
   useEffect(() => {
+    aid_params.current = aid;
     getAlgorithm().then((res) => {
       const { algorithmMap } = res.data;
       // const fieldList = getTableList(res.data);
@@ -226,8 +250,17 @@ export default function (params: params) {
       render: (text, row) => {
         return (
           <>
-            <Button type="link">View Code</Button>
-            <Button type="link">View Problem Instance</Button>
+            <Button
+              type="link"
+              onClick={() => {
+                handleCodeClick(row.code, row.language);
+              }}
+            >
+              View Code
+            </Button>
+            <Button type="link" onClick={handleProblemClick}>
+              View Problem Instance
+            </Button>
             <Button
               type="link"
               onClick={() => {
@@ -332,6 +365,38 @@ export default function (params: params) {
           Add Problem Instance
         </Button>
       </Space>
+
+      {/*modal for view code */}
+
+      <Modal
+        title="Code"
+        visible={codeVisible}
+        footer={false}
+        onCancel={handleCodeCancel}
+      >
+        <Descriptions column={1}>
+          <Descriptions.Item label="language">
+            <Field text={language} mode={'read'} />
+          </Descriptions.Item>
+          <Descriptions.Item label="code">
+            <Field text={code} valueType="code" mode={'read'} />
+          </Descriptions.Item>
+        </Descriptions>
+      </Modal>
+
+      {/* modal for problemInstanceList */}
+
+      <Modal
+        title="Problem Instance"
+        visible={problemsVisible}
+        footer={false}
+        onCancel={handleProblemCancel}
+      >
+        <ProblemInstance aid={aid_params.current} />
+      </Modal>
+
+      {/* modal for Add Implementation */}
+
       <Modal
         title="Add Implementation"
         visible={addImpVisible}
@@ -354,6 +419,9 @@ export default function (params: params) {
           </Form.Item>
         </Form>
       </Modal>
+
+      {/* modal for add Problem Instance */}
+
       <Modal
         title="Add Problem Instance"
         visible={addInsVisible}
