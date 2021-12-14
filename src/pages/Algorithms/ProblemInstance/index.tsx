@@ -7,6 +7,7 @@ import {
   message,
   Input,
   Select,
+  Row,
 } from 'antd';
 import { createIntl, IntlProvider, ProColumns } from '@ant-design/pro-table';
 import type { ActionType, ProColumnType } from '@ant-design/pro-table';
@@ -98,10 +99,37 @@ export default function (params: aid) {
           message.success('success');
         })
         .then((res) => {
-          handleInsOk();
-          history.push('/');
+          actionRef?.current?.reload();
+          setInsVisible(false);
+          form_ins.resetFields();
+        })
+        .catch((res) => {
+          message.error('failed');
         });
     });
+  };
+
+  const removeProbleminstance = (pid: string) => {
+    const data = {
+      pid: pid,
+      uid: uid,
+    };
+    request(
+      'https://n63zuarfta.execute-api.us-east-2.amazonaws.com/Alpha//classification/ProblemInstance/remove',
+      {
+        method: 'POST',
+        data,
+      },
+    )
+      .then((res) => {
+        message.success('remove success');
+      })
+      .then((res) => {
+        actionRef?.current?.reload();
+      })
+      .catch((res) => {
+        message.error('remove failed');
+      });
   };
 
   const columns: ProColumns<ProblemListItem>[] = [
@@ -141,7 +169,18 @@ export default function (params: aid) {
             >
               View Benchmarks
             </Button>
-            <Button type="primary">Remove Problem Instance</Button>
+            <Button
+              type="primary"
+              onClick={() => {
+                if (localStorage.getItem('ams_uname')) {
+                  removeProbleminstance(text.pid);
+                } else {
+                  message.error('Please login to operate');
+                }
+              }}
+            >
+              Remove Problem Instance
+            </Button>
           </>
         );
       },
@@ -185,6 +224,9 @@ export default function (params: aid) {
             return {
               data,
             };
+          }}
+          pagination={{
+            pageSize: 5,
           }}
         ></ProTable>
         <Modal
