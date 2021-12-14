@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Button, ConfigProvider } from 'antd';
+import { Button, ConfigProvider, Modal } from 'antd';
 import { createIntl, IntlProvider, ProColumns } from '@ant-design/pro-table';
 import type { ActionType, ProColumnType } from '@ant-design/pro-table';
 import ProTable, { TableDropdown } from '@ant-design/pro-table';
@@ -9,6 +9,7 @@ import type {
 } from '@/services/TypeAlgorithm';
 import { FetchProblemList } from '@/services/TypeAlgorithm';
 import enUSIntl from 'antd/lib/locale/en_US';
+import Benchmarks from '@/pages/Algorithms/Benchmarks';
 
 interface aid {
   aid: string;
@@ -25,9 +26,19 @@ const type: { [key: string]: string } = {
 };
 
 export default function (params: aid) {
-  const { aid } = params;
+  const { aid, iid } = params;
   const actionRef = useRef<ActionType>();
+  const [benchmarkVisible, setBenchmarkVisible] = useState<boolean>(false);
   const uid = localStorage.getItem('ams_uid');
+  const pid_params = useRef<string>('');
+
+  const handleBenchmarkClick = () => {
+    setBenchmarkVisible(true);
+  };
+
+  const handleBenchMarksCancel = () => {
+    setBenchmarkVisible(false);
+  };
 
   useEffect(() => {
     console.log(aid);
@@ -62,7 +73,15 @@ export default function (params: aid) {
       render: (row, text) => {
         return (
           <>
-            <Button type="link">View Benchmarks</Button>
+            <Button
+              type="link"
+              onClick={() => {
+                pid_params.current = text.pid;
+                handleBenchmarkClick();
+              }}
+            >
+              View Benchmarks
+            </Button>
             <Button type="primary">Remove Problem Instance</Button>
           </>
         );
@@ -100,6 +119,14 @@ export default function (params: aid) {
             };
           }}
         ></ProTable>
+        <Modal
+          visible={benchmarkVisible}
+          title="Benchmarks"
+          footer={false}
+          onCancel={handleBenchMarksCancel}
+        >
+          <Benchmarks uid={uid as string} pid={pid_params.current} iid={iid} />
+        </Modal>
       </ConfigProvider>
     </>
   );
