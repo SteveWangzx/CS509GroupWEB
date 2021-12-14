@@ -7,7 +7,6 @@ import {
   message,
   Input,
   Select,
-  Row,
 } from 'antd';
 import { createIntl, IntlProvider, ProColumns } from '@ant-design/pro-table';
 import type { ActionType, ProColumnType } from '@ant-design/pro-table';
@@ -20,7 +19,6 @@ import { FetchProblemList } from '@/services/TypeAlgorithm';
 import enUSIntl from 'antd/lib/locale/en_US';
 import Benchmarks from '@/pages/Algorithms/Benchmarks';
 import { request } from '@/.umi/plugin-request/request';
-import { history } from 'umi';
 
 interface aid {
   aid: string;
@@ -234,6 +232,7 @@ export default function (params: aid) {
           title="Benchmarks"
           footer={false}
           onCancel={handleBenchMarksCancel}
+          width={900}
         >
           <Benchmarks uid={uid as string} pid={pid_params.current} iid={iid} />
         </Modal>
