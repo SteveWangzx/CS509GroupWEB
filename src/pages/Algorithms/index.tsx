@@ -118,6 +118,7 @@ export default function (params: params) {
       const { algorithmMap } = res.data;
       // const fieldList = getTableList(res.data);
       setAlgoInfo(algorithmMap);
+      actionRef?.current?.reload();
     });
   }, [aid]);
 
@@ -144,10 +145,10 @@ export default function (params: params) {
       )
         .then((res) => {
           message.success('add success');
+          actionRef?.current?.reload();
         })
         .then((res) => {
           handleImpOk();
-          actionRef?.current?.reload();
         });
     });
   };
@@ -225,10 +226,10 @@ export default function (params: params) {
       render: (text, row) => {
         return (
           <>
-            <Button type="primary">View Code</Button>
-            <Button>View Problem Instance</Button>
+            <Button type="link">View Code</Button>
+            <Button type="link">View Problem Instance</Button>
             <Button
-              type="primary"
+              type="link"
               onClick={() => {
                 if (localStorage.getItem('ams_uname')) {
                   removeImplementation(row.iid);
