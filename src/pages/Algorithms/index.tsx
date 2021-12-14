@@ -229,6 +229,8 @@ export default function (params: params) {
       });
   };
 
+  const downloadCode = (code: string) => {};
+
   const columns: ProColumns<TableListItem>[] = [
     {
       title: 'Language',

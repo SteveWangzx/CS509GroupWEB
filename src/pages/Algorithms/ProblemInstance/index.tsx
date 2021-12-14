@@ -18,6 +18,12 @@ const intlMap = {
   enUSIntl,
 };
 
+const type: { [key: string]: string } = {
+  '0': 'Worst Case',
+  '1': 'Best Case',
+  '2': 'Normal Case',
+};
+
 export default function (params: aid) {
   const { aid } = params;
   const actionRef = useRef<ActionType>();
@@ -46,6 +52,9 @@ export default function (params: aid) {
       dataIndex: 'timecomplexitytype',
       search: false,
       width: 50,
+      render: (row, text) => {
+        return <div>{type[text.timecomplexitytype]}</div>;
+      },
     },
     {
       title: 'Operate',
@@ -54,6 +63,7 @@ export default function (params: aid) {
         return (
           <>
             <Button type="link">View Benchmarks</Button>
+            <Button type="primary">Remove Problem Instance</Button>
           </>
         );
       },
@@ -71,6 +81,13 @@ export default function (params: aid) {
             optionRender: false,
             collapsed: false,
           }}
+          toolBarRender={() => [
+            <>
+              <Button type="primary" onClick={() => {}}>
+                Add Problem Instance
+              </Button>
+            </>,
+          ]}
           request={async (params, sort) => {
             const handleData: ImplementationParams = {
               aid: aid,
