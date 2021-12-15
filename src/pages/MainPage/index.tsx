@@ -278,7 +278,7 @@ export default function IndexPage() {
     } else if (key == 'admin1') {
       return <RegisterUser />;
     } else {
-      return <Algorithms aid={key as string} />;
+      return <Algorithms aid={key as string} dataTree={dataTree} />;
     }
   };
 
@@ -468,19 +468,7 @@ export default function IndexPage() {
               >
                 Remove Classification
               </Button>
-              <Button
-                type="primary"
-                style={{ display: 'inline' }}
-                onClick={() => {
-                  if (localStorage.getItem('ams_uname')) {
-                    showRemoveAlgoModal();
-                  } else {
-                    message.error('Please login to operate');
-                  }
-                }}
-              >
-                Remove Algorithm
-              </Button>
+
               <Button
                 type="primary"
                 style={{ display: 'inline' }}
@@ -713,45 +701,6 @@ export default function IndexPage() {
                     onChange={onTreeChange}
                   >
                     {dataTree}
-                  </TreeSelect>
-                </Form.Item>
-              </Form>
-            </Modal>
-            <Modal
-              title="remove Algorithm"
-              visible={RemoveAlgoVisible}
-              footer={[
-                <Button type="primary" onClick={() => handleRemoveAlgoCancel()}>
-                  Cancel
-                </Button>,
-                <Button type="primary" onClick={() => RemoveAlgorithm()}>
-                  Remove
-                </Button>,
-              ]}
-              onCancel={handleRemoveAlgoCancel}
-            >
-              <Form form={form_removealgo}>
-                <Form.Item
-                  name="aid"
-                  rules={[
-                    {
-                      required: true,
-                      message: 'Must select a algorithm',
-                    },
-                  ]}
-                  label="Algorithm"
-                >
-                  <TreeSelect
-                    showSearch
-                    style={{ width: '100%' }}
-                    value={value}
-                    dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-                    placeholder="Please select algorithm"
-                    allowClear
-                    treeDefaultExpandAll
-                    onChange={onTreeChange}
-                  >
-                    {algoData}
                   </TreeSelect>
                 </Form.Item>
               </Form>

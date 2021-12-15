@@ -15,6 +15,7 @@ import {
   Col,
   Row,
   Menu,
+  TreeSelect,
   Select,
   ConfigProvider,
 } from 'antd';
@@ -34,6 +35,7 @@ import ProblemInstance from '@/pages/Algorithms/ProblemInstance';
 
 interface params {
   aid: string;
+  dataTree: any;
 }
 
 const intlMap = {
@@ -47,17 +49,20 @@ export default function (params: params) {
 
   const actionRef = useRef<ActionType>();
   // table auto refresh
-  const { aid } = params;
+  const { aid, dataTree } = params;
   const [form_imp] = Form.useForm();
   const [form_removeimp] = Form.useForm();
   const [addImpVisible, setImpVisible] = useState<boolean>(false);
   const [removeImpVisible, setRemoveImpVisible] = useState<boolean>(false);
   const [codeVisible, setCodeVisible] = useState<boolean>(false);
   const [problemsVisible, setProblemsVisible] = useState<boolean>(false);
+  const [ReclassifyAlgoVisible, setReclassifyAlgoVisible] =
+    useState<boolean>(false);
   const [text, setText] = useState<any>();
   const [algoInfo, setAlgoInfo] = useState<info>();
   const [refresh, setRefresh] = useState<boolean>(false);
   const [language, setLanguage] = useState<string>();
+  const [form_reclassifyalgo] = Form.useForm();
   const aid_params = useRef<string>('');
   const iid_params = useRef<string>('');
   const [code, setCode] = useState<string>('');
@@ -65,11 +70,18 @@ export default function (params: params) {
   const uid = localStorage.getItem('ams_uid');
   const { Option } = Select;
   const [value, setValue] = useState<string>('');
+  const onTreeChange = () => {
+    setValue(value);
+  };
   const onChange = () => {
     setValue(value);
   };
   const { Title, Paragraph, Text, Link } = Typography;
 
+  const showReclassifyAlgoModal = () => {
+    setReclassifyAlgoVisible(true);
+    form_reclassifyalgo.resetFields();
+  };
   const handleImpOk = () => {
     setImpVisible(false);
     form_imp.resetFields();
@@ -106,6 +118,15 @@ export default function (params: params) {
   const handleProblemCancel = () => {
     setProblemsVisible(false);
   };
+  const handleReclassifyAlgoCancel = () => {
+    setReclassifyAlgoVisible(false);
+    form_reclassifyalgo.resetFields();
+  };
+  const handleReclassifyAlgoOk = () => {
+    setReclassifyAlgoVisible(true);
+    form_reclassifyalgo.resetFields();
+  };
+
   const getAlgorithm = async () => {
     const res = await request(
       'https://n63zuarfta.execute-api.us-east-2.amazonaws.com/Alpha/classification/Algorithm',
@@ -118,6 +139,49 @@ export default function (params: params) {
       },
     );
     return res;
+  };
+
+  const RemoveAlgorithm = () => {
+    const data = {
+      url: '',
+      aid: aid,
+      uid: uid,
+    };
+    console.log(data);
+    request(
+      'https://n63zuarfta.execute-api.us-east-2.amazonaws.com/Alpha/classification/Algorithm/remove',
+      {
+        method: 'POST',
+        data,
+      },
+    ).then((res) => {
+      message.success(res.msg);
+      history.push('/');
+    });
+  };
+
+  const ReclassifyAlgorithm = () => {
+    form_reclassifyalgo.validateFields().then(() => {
+      const { cid } = form_reclassifyalgo.getFieldsValue();
+      const data = {
+        url: '',
+        parentcid: cid,
+        aid: aid,
+        uid: uid,
+      };
+      console.log(data);
+      request(
+        'https://n63zuarfta.execute-api.us-east-2.amazonaws.com/Alpha/classification/Algorithm/reclassify',
+        {
+          method: 'POST',
+          data,
+        },
+      ).then((res) => {
+        message.success(res.msg);
+        handleReclassifyAlgoOk();
+        history.push('/');
+      });
+    });
   };
 
   useEffect(() => {
@@ -245,6 +309,32 @@ export default function (params: params) {
   return (
     <div>
       <Title>{algoInfo?.name}</Title>
+      <Title level={2}>
+        <Button
+          type="primary"
+          onClick={() => {
+            if (localStorage.getItem('ams_uname')) {
+              RemoveAlgorithm();
+            } else {
+              message.error('Please login to operate');
+            }
+          }}
+        >
+          Remove
+        </Button>
+        <Button
+          type="primary"
+          onClick={() => {
+            if (localStorage.getItem('ams_uname')) {
+              showReclassifyAlgoModal();
+            } else {
+              message.error('Please login to operate');
+            }
+          }}
+        >
+          Reclassify
+        </Button>
+      </Title>
       <Rate />
       <Title level={2}>Introduction</Title>
       {/* <ProCard title="Introduction" extra="extra" tooltip="Introduction" style={{ maxWidth: 1100 }} headerBordered>
@@ -366,6 +456,46 @@ export default function (params: params) {
           </Form.Item>
           <Form.Item name="code" label="implementation">
             <Input.TextArea />
+          </Form.Item>
+        </Form>
+      </Modal>
+
+      <Modal
+        title="reclassify Algorithm"
+        visible={ReclassifyAlgoVisible}
+        footer={[
+          <Button type="primary" onClick={() => handleReclassifyAlgoCancel()}>
+            Cancel
+          </Button>,
+          <Button type="primary" onClick={() => ReclassifyAlgorithm()}>
+            Reclassify
+          </Button>,
+        ]}
+        onCancel={handleReclassifyAlgoCancel}
+      >
+        <Form form={form_reclassifyalgo}>
+          <Form.Item
+            name="cid"
+            rules={[
+              {
+                required: true,
+                message: 'Must select a classification',
+              },
+            ]}
+            label="New Classification"
+          >
+            <TreeSelect
+              showSearch
+              style={{ width: '100%' }}
+              value={value}
+              dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+              placeholder="Please select classification"
+              allowClear
+              treeDefaultExpandAll
+              onChange={onTreeChange}
+            >
+              {dataTree}
+            </TreeSelect>
           </Form.Item>
         </Form>
       </Modal>
