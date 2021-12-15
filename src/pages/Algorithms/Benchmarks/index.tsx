@@ -168,6 +168,9 @@ export default function (params: benchParams) {
             optionRender: false,
             collapsed: false,
           }}
+          pagination={{
+            pageSize: 5,
+          }}
           toolBarRender={() => [
             <>
               <Button
