@@ -482,19 +482,6 @@ export default function IndexPage() {
               >
                 Merge Classification
               </Button>
-              <Button
-                type="primary"
-                style={{ display: 'inline' }}
-                onClick={() => {
-                  if (localStorage.getItem('ams_uname')) {
-                    showReclassifyAlgoModal();
-                  } else {
-                    message.error('Please login to operate');
-                  }
-                }}
-              >
-                Reclassify Algorithm
-              </Button>
             </Space>
             <Modal
               title="Add Classification"
@@ -751,71 +738,6 @@ export default function IndexPage() {
                     },
                   ]}
                   label="Classification 2"
-                >
-                  <TreeSelect
-                    showSearch
-                    style={{ width: '100%' }}
-                    value={value}
-                    dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-                    placeholder="Please select classification"
-                    allowClear
-                    treeDefaultExpandAll
-                    onChange={onTreeChange}
-                  >
-                    {dataTree}
-                  </TreeSelect>
-                </Form.Item>
-              </Form>
-            </Modal>
-            <Modal
-              title="reclassify Algorithm"
-              visible={ReclassifyAlgoVisible}
-              footer={[
-                <Button
-                  type="primary"
-                  onClick={() => handleReclassifyAlgoCancel()}
-                >
-                  Cancel
-                </Button>,
-                <Button type="primary" onClick={() => ReclassifyAlgorithm()}>
-                  Reclassify
-                </Button>,
-              ]}
-              onCancel={handleReclassifyAlgoCancel}
-            >
-              <Form form={form_reclassifyalgo}>
-                <Form.Item
-                  name="aid"
-                  rules={[
-                    {
-                      required: true,
-                      message: 'Must select a algorithm',
-                    },
-                  ]}
-                  label="Algorithm"
-                >
-                  <TreeSelect
-                    showSearch
-                    style={{ width: '100%' }}
-                    value={value}
-                    dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-                    placeholder="Please select algorithm"
-                    allowClear
-                    treeDefaultExpandAll
-                    onChange={onTreeChange}
-                  >
-                    {algoData}
-                  </TreeSelect>
-                </Form.Item>
-                <Form.Item
-                  name="cid"
-                  rules={[
-                    {
-                      required: true,
-                      message: 'Must select a classification',
-                    },
-                  ]}
-                  label="New Classification"
                 >
                   <TreeSelect
                     showSearch
