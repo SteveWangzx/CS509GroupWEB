@@ -168,7 +168,7 @@ export default function (params: aid) {
               View Benchmarks
             </Button>
             <Button
-              type="primary"
+              type="link"
               onClick={() => {
                 if (localStorage.getItem('ams_uname')) {
                   removeProbleminstance(text.pid);
