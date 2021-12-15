@@ -102,11 +102,13 @@ export default function (params: benchParams) {
       title: 'Benchmarks Name',
       dataIndex: 'name',
       search: false,
+      width: 150,
     },
     {
       title: 'Chip',
       dataIndex: 'chip',
       search: false,
+      width: 150,
     },
     {
       title: 'Core',

@@ -22,6 +22,7 @@ export default function IndexPage() {
   const { SubMenu } = Menu;
   const { TreeNode } = TreeSelect;
   const uid = localStorage.getItem('ams_uid');
+  const utype = localStorage.getItem('ams_type');
   const [data, setData] = useState<any>();
   const [dataTree, setDataTree] = useState<any>();
   const [menuData, setMenuData] = useState<any>();
@@ -43,6 +44,7 @@ export default function IndexPage() {
   const [algoParam, setAlgoParam] = useState<any>('0');
   const [refresh, setRefresh] = useState<boolean>(false);
   const [renderPage, setRenderPage] = useState<any>();
+  const [adminPage, setAdminPage] = useState<any>();
 
   const onTreeChange = () => {
     setValue(value);
@@ -81,9 +83,11 @@ export default function IndexPage() {
       const data_menu = recursionMenu(res.data);
       const data_tree = recursionTree(res.data);
       const data_tree_algo = recursionTreeAlgo(res.data);
+      const data_admin = tokenCondition();
       setDataTree(data_tree);
       setMenuData(data_menu);
       setAlgoData(data_tree_algo);
+      setAdminPage(data_admin);
     });
   }, []);
 
@@ -278,6 +282,17 @@ export default function IndexPage() {
     }
   };
 
+  const tokenCondition = () => {
+    if (utype == '0') {
+      return (
+        <SubMenu key="admin" title="Admin">
+          <Menu.Item key="admin1">View Register Users</Menu.Item>
+        </SubMenu>
+      );
+    }
+    return <div></div>;
+  };
+
   const RemoveClassification = () => {
     form_removeclass.validateFields().then(() => {
       const { cid } = form_removeclass.getFieldsValue();
@@ -396,9 +411,12 @@ export default function IndexPage() {
               Introduction
             </Menu.Item>
             {menuData}
-            <SubMenu key="admin" title="Admin">
-              <Menu.Item key="admin1">View Register Users</Menu.Item>
-            </SubMenu>
+            {/* {utype && utype == '1' :
+              (<SubMenu key="admin" title="Admin">
+                <Menu.Item key="admin1">View Register Users</Menu.Item>
+              </SubMenu>) ? (<div></div>)
+            } */}
+            {adminPage}
           </Menu>
         </Sider>
         <Layout style={{ marginLeft: 200 }}>

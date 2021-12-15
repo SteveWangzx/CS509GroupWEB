@@ -340,7 +340,7 @@ export default function (params: params) {
         visible={problemsVisible}
         footer={false}
         onCancel={handleProblemCancel}
-        width={800}
+        width={1000}
       >
         <ProblemInstance aid={aid_params.current} iid={iid_params.current} />
       </Modal>

@@ -135,13 +135,13 @@ export default function (params: aid) {
       title: 'Input',
       dataIndex: 'input',
       search: false,
-      width: 50,
+      width: 200,
     },
     {
       title: 'Output',
       dataIndex: 'output',
       search: false,
-      width: 50,
+      width: 200,
     },
     {
       title: 'TimeComplexityType',
@@ -232,7 +232,7 @@ export default function (params: aid) {
           title="Benchmarks"
           footer={false}
           onCancel={handleBenchMarksCancel}
-          width={900}
+          width={1000}
         >
           <Benchmarks uid={uid as string} pid={pid_params.current} iid={iid} />
         </Modal>
