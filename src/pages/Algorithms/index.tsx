@@ -61,7 +61,7 @@ export default function (params: params) {
   const [text, setText] = useState<any>();
   const [algoInfo, setAlgoInfo] = useState<info>();
   const [refresh, setRefresh] = useState<boolean>(false);
-  const [language, setLanguage] = useState<string>();
+  const [language, setLanguage] = useState<string>('');
   const [form_reclassifyalgo] = Form.useForm();
   const aid_params = useRef<string>('');
   const iid_params = useRef<string>('');
@@ -125,6 +125,20 @@ export default function (params: params) {
   const handleReclassifyAlgoOk = () => {
     setReclassifyAlgoVisible(true);
     form_reclassifyalgo.resetFields();
+  };
+  const download = (href: string, title: string) => {
+    const a = document.createElement('a');
+    a.setAttribute('href', href);
+    a.setAttribute('download', title);
+    a.click();
+  };
+  const handleDownload = (code: string, language: string, name: string) => {
+    const content = code;
+    const title = language + ' for ' + name + '.txt';
+    const blob = new Blob([content]);
+    const href = URL.createObjectURL(blob);
+    download(href, title);
+    URL.revokeObjectURL(href);
   };
 
   const getAlgorithm = async () => {
@@ -410,7 +424,16 @@ export default function (params: params) {
       <Modal
         title="Code"
         visible={codeVisible}
-        footer={false}
+        footer={[
+          <Button
+            type="primary"
+            onClick={() => {
+              handleDownload(code, language, algoInfo?.name as string);
+            }}
+          >
+            Download Code
+          </Button>,
+        ]}
         onCancel={handleCodeCancel}
       >
         <Descriptions column={1}>
