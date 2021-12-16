@@ -15,6 +15,7 @@ export default () => {
           type="link"
           onClick={() => {
             localStorage.clear();
+            history.push('/');
           }}
         >
           {'Sign out'}
@@ -45,9 +46,10 @@ export default () => {
   };
 
   useEffect(() => {
+    console.log(userName);
     const data = userLogin();
     setdata(data);
-  }, []);
+  }, [userName]);
 
   return (
     <>

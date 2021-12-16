@@ -36,7 +36,7 @@ const Login = () => {
         localStorage.setItem('ams_type', type);
         localStorage.setItem('ams_uid', uid);
         console.log(res);
-        message.success(msg);
+        message.success('Login succeed');
         history.push('/');
         // localStorage.setItem('ams_statusType', statusType);
       })
