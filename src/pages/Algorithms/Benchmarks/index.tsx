@@ -178,11 +178,7 @@ export default function (params: benchParams) {
               <Button
                 type="primary"
                 onClick={() => {
-                  if (localStorage.getItem('ams_uname')) {
-                    handlAddBenchClick();
-                  } else {
-                    message.error('Please login to operate');
-                  }
+                  handlAddBenchClick();
                 }}
               >
                 Add Benchmark
