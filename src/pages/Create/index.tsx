@@ -1,6 +1,6 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { history, request, useRequest } from 'umi';
-import { Button, Form, Input, Select, message } from 'antd';
+import { Button, Form, Input, Select, message, Radio } from 'antd';
 import { useModel } from 'umi';
 // import { userName } from 'config'
 
@@ -19,6 +19,11 @@ export type LoginParams = {
 const Create = () => {
   const { refresh } = useModel('@@initialState');
   const [form] = Form.useForm();
+  const [userType, setUserType] = useState('1');
+
+  const onUserTypeChange = (value: any) => {
+    setUserType(value);
+  };
   // const _userName = userName()
 
   const register_set = async (data: any) => {
@@ -44,10 +49,11 @@ const Create = () => {
   };
   const registerHook = () => {
     form.validateFields().then(() => {
-      const { username, password } = form.getFieldsValue();
+      const { username, password, type } = form.getFieldsValue();
       const data = {
         uname: username,
         password: password,
+        type: type,
       };
       register_set(data);
     });
@@ -149,6 +155,12 @@ const Create = () => {
               />
             </Form.Item>
             <div className={styles.divider} />
+            <Form.Item name="type" label="Register Type">
+              <Radio.Group value={userType} onChange={onUserTypeChange}>
+                <Radio.Button value="0">Admin</Radio.Button>
+                <Radio.Button value="1">Normal</Radio.Button>
+              </Radio.Group>
+            </Form.Item>
             <div className={styles.divider} />
             <Form.Item>
               <Button
