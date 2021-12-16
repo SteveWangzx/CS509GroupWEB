@@ -47,7 +47,7 @@ export default () => {
   useEffect(() => {
     const data = userLogin();
     setdata(data);
-  });
+  }, []);
 
   return (
     <>
